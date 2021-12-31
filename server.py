@@ -2,6 +2,13 @@ from flask import Flask, render_template
 import psutil
 import time
 import socket
+import adafruit_dht
+import board
+import time
+import curses
+
+# init sensor
+dht_device = adafruit_dht.DHT11(board.D4)
 
 app = Flask(__name__)
 
@@ -10,10 +17,12 @@ def getUptime():
     return time.strftime('%H:%M:%S', time.gmtime(uptime))
 
 def getSensorData():
+	temperature = dht_device.temperature
+	humidity = dht_device.humidity
 	data = {
-         'temperature' : 23,
-         'humidity': 45
-         }
+		'temperature' : temperature,
+		'humidity': humidity
+	}
 	return data
 
 def getData():
