@@ -4,6 +4,7 @@ import time
 
 # webserver
 from flask import Flask, render_template
+from flask_cors import CORS, cross_origin
 import socket
 
 # sensors
@@ -15,6 +16,8 @@ import socket
 #dht_device = adafruit_dht.DHT11(board.D4)
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 def getUptime():
     uptime = time.time() - psutil.boot_time()
@@ -36,7 +39,7 @@ def getSensorData():
 
 def getData():
     data = {
-         'deviceName' : socket.gethostname(),
+         'hostname' : socket.gethostname(),
          'temperature': getSensorData().get('temperature'),
          'humidity': getSensorData().get('humidity'),
          'pressure': -1,

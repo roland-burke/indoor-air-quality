@@ -1,15 +1,13 @@
 <template>
 	<div class="flex justify-center">
 		<fieldset
-			class="m-10 p-4 w-3/6 max-w-2xl border-4 rounded-xl border-blue-400"
-		>
+			class="m-10 p-4 w-3/6 max-w-2xl border-4 rounded-xl border-blue-400">
 			<legend class="text-2xl px-2 text-left">Controls</legend>
 			<div class="divide-y divide-solid">
-				<div>
+				<div class="mb-3">
 					<div
 						class="flex justify-between items-center"
-						@click="toggleAlarm = !toggleAlarm"
-					>
+						@click="toggleAlarm = !toggleAlarm">
 						<div
 							class="
 								w-16
@@ -22,8 +20,7 @@
 								duration-300
 								ease-in-out
 							"
-							:class="{ 'bg-green-400': toggleAlarm }"
-						>
+							:class="{ 'bg-green-400': toggleAlarm }">
 							<div
 								class="
 									bg-white
@@ -42,7 +39,7 @@
 					</div>
 				</div>
 				<div>
-					<div>
+					<div class="mt-3">
 						<div
 							class="flex justify-between items-center"
 							@click="toggleDisplay = !toggleDisplay">
@@ -56,8 +53,7 @@
 									rounded-full
 									p-1
 									duration-300
-									ease-in-out
-								"
+									ease-in-out"
 								:class="{ 'bg-green-400': toggleDisplay }">
 								<div
 									class="
@@ -68,8 +64,7 @@
 										shadow-md
 										transform
 										duration-300
-										ease-in-out
-									"
+										ease-in-out"
 									:class="{ 'translate-x-6': toggleDisplay }"
 								></div>
 							</div>
