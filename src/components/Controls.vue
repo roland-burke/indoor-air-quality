@@ -1,18 +1,18 @@
 <template>
 	<div class="flex justify-center">
 		<fieldset
-			class="m-10 p-4 w-3/6 max-w-2xl border-4 rounded-xl border-blue-400">
+			class="mx-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl border-blue-400">
 			<legend class="text-2xl px-2 text-left">Controls</legend>
 			<div class="divide-y divide-solid">
-				<div class="mb-3">
+				<div class="flex justify-between items-center mb-3">
 					<div
-						class="flex justify-between items-center"
+						class="flex min-w-max justify-between items-center"
 						@click="toggleAlarm = !toggleAlarm">
 						<div
 							class="
-								w-16
-								h-10
 								flex
+								w-20
+								h-10
 								items-center
 								bg-gray-300
 								rounded-full
@@ -32,20 +32,20 @@
 									duration-300
 									ease-in-out
 								"
-								:class="{ 'translate-x-6': toggleAlarm }"
+								:class="{ 'translate-x-10': toggleAlarm }"
 							></div>
 						</div>
-						<h2>Alarm when the air quality is too bad</h2>
 					</div>
+					<h2 class="ml-2">Alarm when the air quality is too bad</h2>
 				</div>
 				<div>
-					<div class="mt-3">
+					<div class="flex justify-between items-center mt-3">
 						<div
 							class="flex justify-between items-center"
 							@click="toggleDisplay = !toggleDisplay">
 							<div
 								class="
-									w-16
+									w-20
 									h-10
 									flex
 									items-center
@@ -65,11 +65,11 @@
 										transform
 										duration-300
 										ease-in-out"
-									:class="{ 'translate-x-6': toggleDisplay }"
+									:class="{ 'translate-x-10': toggleDisplay }"
 								></div>
 							</div>
-							<h2>Show the information on the builtin display</h2>
 						</div>
+							<h2 class="ml-2">Show the information on the builtin display</h2>
 					</div>
 				</div>
 			</div>
@@ -85,7 +85,7 @@ export default defineComponent({
 	props: {
 		msg: String
 	},
-	data: function () {
+	data: function() {
 		return {
 			toggleAlarm: false,
 			toggleDisplay: false

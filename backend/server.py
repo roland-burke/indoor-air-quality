@@ -1,10 +1,11 @@
 # general
 import psutil
 import time
+import json
 
 # webserver
-from flask import Flask, render_template
-from flask_cors import CORS, cross_origin
+from flask import Flask, send_from_directory
+from flask_cors import CORS
 import socket
 
 # sensors
@@ -15,9 +16,34 @@ import socket
 # init sensor
 #dht_device = adafruit_dht.DHT11(board.D4)
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='static')
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+alarmEnabled = False
+displayEnabled = True
+
+def setup():
+	controlsFile = open('controls.json', 'a+')
+	controlsFile.seek(0)
+	#controls = json.load(controlsFile)
+
+	try:
+		controls = json.load(controlsFile)
+		alarmEnabled = controls['alarmEnabled']
+		displayEnabled = controls['displayEnabled']
+	except json.decoder.JSONDecodeError:
+		alarmEnabled = False
+		displayEnabled = True
+		print('exception')
+		controlsFile.write(json.dumps({"alarmEnabled": alarmEnabled, "displayEnabled": displayEnabled}, indent = 4))
+	controlsFile.close()
+
+	print(alarmEnabled)
+	print(displayEnabled)
+ 
+
+setup()
 
 def getUptime():
     uptime = time.time() - psutil.boot_time()
@@ -51,11 +77,47 @@ def getData():
 
 @app.route('/')
 def welcome():
-	return render_template('index.html')
+	return send_from_directory('static', 'index.html')
 
 @app.route('/api/data')
 def data():
 	return getData()
+
+@app.route('/api/controls/alarm/<value>')
+def controlAlarm(value):
+	if value.lower() == 'true':
+		controlAlarm = True
+	elif value.lower() == 'false':
+		controlAlarm = False
+	else:
+		data = {
+			'status' : 'Error',
+    	}
+		return data
+
+	data = {
+		'status' : 'success',
+    }
+	return data
+
+@app.route('/api/controls/display/<value>')
+def controlDisplay(value):
+	if value.lower() == 'true':
+		saveControls()
+		controlDisplay = True
+	elif value.lower() == 'false':
+		saveControls()
+		controlDisplay = False
+	else:
+		data = {
+			'status' : 'Error',
+    	}
+		return data
+
+	data = {
+		'status' : 'success',
+    }
+	return data
     
     
 if __name__ == '__main__':
