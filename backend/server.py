@@ -23,11 +23,15 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 alarmEnabled = False
 displayEnabled = True
 
-def setup():
+def saveControls():
 	controlsFile = open('controls.json', 'a+')
 	controlsFile.seek(0)
-	#controls = json.load(controlsFile)
-
+	controlsFile.write(json.dumps({"alarmEnabled": alarmEnabled, "displayEnabled": displayEnabled}, indent = 4))
+	controlsFile.close()
+ 
+def loadControls():
+	controlsFile = open('controls.json', 'a+')
+	controlsFile.seek(0)
 	try:
 		controls = json.load(controlsFile)
 		alarmEnabled = controls['alarmEnabled']
@@ -35,13 +39,14 @@ def setup():
 	except json.decoder.JSONDecodeError:
 		alarmEnabled = False
 		displayEnabled = True
-		print('exception')
-		controlsFile.write(json.dumps({"alarmEnabled": alarmEnabled, "displayEnabled": displayEnabled}, indent = 4))
 	controlsFile.close()
 
+def setup():
+	loadControls()
+	saveControls()
 	print(alarmEnabled)
 	print(displayEnabled)
- 
+
 
 setup()
 
@@ -71,7 +76,9 @@ def getData():
          'pressure': -1,
          'co2': -1,
          'tvoc': -1,
-         'uptime': getUptime()
+         'uptime': getUptime(),
+         'alarmEnabled': alarmEnabled,
+         'displayEnabled': displayEnabled
     }
     return data
 
