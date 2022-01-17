@@ -21,7 +21,7 @@
 					</div>
 					<div class="flex items-center">
 						<h1 class="text-base font-bold mr-2">Uptime:</h1>
-						<p>{{ this.responseData.hostname }}</p>
+						<p>{{ this.responseData.uptime }}</p>
 					</div>
 				</div>
 
@@ -49,7 +49,7 @@
 								{{ this.responseData.temperature }} °C
 							</div>
 							<div class="text-left">
-								{{ this.responseData.huimdity }} %
+								{{ this.responseData.humidity }} %
 							</div>
 							<div class="text-left">
 								{{ this.responseData.pressure }} hPa
@@ -70,79 +70,12 @@
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
-import axios from 'axios'
-
-class ResponseData {
-	hostname: string
-	uptime: string
-	temperature: number
-	humidity: number
-	pressure: number
-	co2: number
-	tvoc: number
-
-	constructor(
-		hostname: string,
-		uptime: string,
-		temperature: number,
-		humidity: number,
-		pressure: number,
-		co2: number,
-		tvoc: number
-	) {
-		this.hostname = hostname
-		this.uptime = uptime
-		this.temperature = temperature
-		this.humidity = humidity
-		this.pressure = pressure
-		this.co2 = co2
-		this.tvoc = tvoc
-	}
-
-	static of(data: any): ResponseData {
-		return new ResponseData(
-			data.hostname,
-			data.uptime,
-			data.temperature,
-			data.humidity,
-			data.pressure,
-			data.co2,
-			data.tvoc
-		)
-	}
-
-	static default() {
-		return new ResponseData('n.A.', 'n.A.', 0, 0, 0, 0, 0)
-	}
-}
+import { ResponseData } from '@/views/Home.vue'
 
 export default defineComponent({
 	name: 'Dashboard',
 	props: {
-		msg: String
-	},
-	data: function() {
-		return {
-			responseData: ResponseData.default()
-		}
-	},
-	mounted: function() {
-		this.fetchData()
-		this.start()
-	},
-	methods: {
-		start: function() {
-			setInterval(() => {
-				this.fetchData()
-			}, 5000)
-		},
-
-		fetchData: function() {
-			axios.get('http://localhost:5000/api/data').then((response: any) => {
-				console.log(response)
-				this.responseData = ResponseData.of(response.data)
-			})
-		}
+		responseData: ResponseData
 	}
 })
 </script>

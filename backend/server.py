@@ -1,4 +1,5 @@
 # general
+from signal import alarm
 import psutil
 import time
 import json
@@ -24,14 +25,16 @@ alarmEnabled = False
 displayEnabled = True
 
 def saveControls():
-	controlsFile = open('controls.json', 'a+')
-	controlsFile.seek(0)
+	controlsFile = open('controls.json', 'w+')
+	controlsFile.seek(0, 0)
 	controlsFile.write(json.dumps({"alarmEnabled": alarmEnabled, "displayEnabled": displayEnabled}, indent = 4))
 	controlsFile.close()
  
 def loadControls():
-	controlsFile = open('controls.json', 'a+')
-	controlsFile.seek(0)
+	global alarmEnabled
+	global displayEnabled
+	controlsFile = open('controls.json', 'r+')
+	controlsFile.seek(0, 0)
 	try:
 		controls = json.load(controlsFile)
 		alarmEnabled = controls['alarmEnabled']
@@ -69,6 +72,8 @@ def getSensorData():
 	return data
 
 def getData():
+    global alarmEnabled
+    global displayEnabled
     data = {
          'hostname' : socket.gethostname(),
          'temperature': getSensorData().get('temperature'),
@@ -82,20 +87,23 @@ def getData():
     }
     return data
 
-@app.route('/')
+@app.route('/', methods = ['GET'])
 def welcome():
 	return send_from_directory('static', 'index.html')
 
-@app.route('/api/data')
+@app.route('/api/data', methods = ['GET'])
 def data():
 	return getData()
 
-@app.route('/api/controls/alarm/<value>')
+@app.route('/api/controls/alarm/<value>', methods = ['POST'])
 def controlAlarm(value):
+	global alarmEnabled
 	if value.lower() == 'true':
-		controlAlarm = True
+		alarmEnabled = True
+		saveControls()
 	elif value.lower() == 'false':
-		controlAlarm = False
+		alarmEnabled = False
+		saveControls()
 	else:
 		data = {
 			'status' : 'Error',
@@ -107,14 +115,15 @@ def controlAlarm(value):
     }
 	return data
 
-@app.route('/api/controls/display/<value>')
+@app.route('/api/controls/display/<value>', methods = ['POST'])
 def controlDisplay(value):
+	global displayEnabled
 	if value.lower() == 'true':
+		displayEnabled = True
 		saveControls()
-		controlDisplay = True
 	elif value.lower() == 'false':
+		displayEnabled = False
 		saveControls()
-		controlDisplay = False
 	else:
 		data = {
 			'status' : 'Error',
