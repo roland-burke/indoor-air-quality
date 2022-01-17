@@ -9,6 +9,7 @@
 				max-w-2xl
 				border-4
 				rounded-xl
+				shadow-md
 				border-blue-400
 			"
 		>

@@ -1,4 +1,4 @@
 {
-    "alarmEnabled": false,
-    "displayEnabled": false
+    "alarmEnabled": true,
+    "displayEnabled": true
 }

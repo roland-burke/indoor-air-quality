@@ -1,7 +1,7 @@
 <template>
 	<div class="flex justify-center">
 		<fieldset
-			class="mx-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl border-blue-400"
+			class="mx-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl shadow-md border-blue-400"
 		>
 			<legend class="text-2xl px-2 text-left">Controls</legend>
 			<div class="divide-y divide-solid">
@@ -238,8 +238,12 @@ export default defineComponent({
 		toggleAlarm: function() {
 			this.alarmChecked = !this.alarmChecked
 			this.smartAlarmEnabled = this.alarmChecked && true
-
 			axios.post('http://localhost:5000/api/controls/alarm/' + this.alarmChecked).then((response: any) => {
+				/*
+				if (response.data.status !== 'success') {
+					this.alarmChecked = this.smartAlarmEnabled = false
+				}
+				*/
 				console.log(response)
 			})
 		},
@@ -248,6 +252,11 @@ export default defineComponent({
 			this.smartDisplayEnabled = this.displayChecked && true
 
 			axios.post('http://localhost:5000/api/controls/display/' + this.displayChecked).then((response: any) => {
+				/*
+				if (response.data.status !== 'success') {
+					this.displayChecked = this.smartDisplayEnabled = false
+				}
+				*/
 				console.log(response)
 			})
 		},
