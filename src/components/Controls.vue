@@ -1,67 +1,38 @@
 <template>
 	<div class="flex justify-center">
 		<fieldset
-			class="mx-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl border-blue-400">
+			class="mx-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl border-blue-400"
+		>
 			<legend class="text-2xl px-2 text-left">Controls</legend>
 			<div class="divide-y divide-solid">
-				<div class="flex justify-between items-center mb-3">
-					<div class="flex flex-col">
-						<h2 class="ml-2 text-xl text-left font-bold">Enable Alarm</h2>
-						<h3 class="ml-2 text-left">Give an alarm when the air quality is too bad</h3>
-					</div>
-					<div
-						class="flex min-w-max justify-between items-center"
-						@click="toggleAlarm()">
-						<div
-							class="
-								flex
-								w-20
-								h-10
-								items-center
-								bg-gray-300
-								rounded-full
-								p-1
-								duration-300
-								ease-in-out
-							"
-							:class="{ 'bg-green-400': alarmChecked }">
-							<div
-								class="
-									bg-white
-									w-8
-									h-8
-									rounded-full
-									shadow-md
-									transform
-									duration-300
-									ease-in-out
-								"
-								:class="{ 'translate-x-10': alarmChecked }"
-							></div>
-						</div>
-					</div>
-				</div>
 				<div>
-					<div class="flex justify-between items-center mt-3">
+					<div class="flex justify-between items-center mb-3">
 						<div class="flex flex-col">
-							<h2 class="ml-2 text-xl text-left font-bold">Enable Display</h2>
-							<h3 class="ml-2 text-left">Turn on the builtin display and show information</h3>
+							<h2 class="ml-2 text-xl text-left font-bold">
+								Enable Alarm
+							</h2>
+							<h3 class="ml-2 text-left">
+								Give an alarm when the air quality is too bad
+							</h3>
 						</div>
 						<div
-							class="flex justify-between items-center"
-							@click="toggleDisplay()">
+							class="flex min-w-max justify-between items-center"
+							@click="toggleAlarm()"
+						>
 							<div
 								class="
+									flex
 									w-20
 									h-10
-									flex
 									items-center
 									bg-gray-300
 									rounded-full
 									p-1
 									duration-300
-									ease-in-out"
-								:class="{ 'bg-green-400': displayChecked }">
+									ease-in-out
+								"
+								:class="{ 'bg-green-400': alarmChecked }"
+							>
 								<div
 									class="
 										bg-white
@@ -71,9 +42,163 @@
 										shadow-md
 										transform
 										duration-300
-										ease-in-out"
-									:class="{ 'translate-x-10': displayChecked }"
+										ease-in-out
+									"
+									:class="{ 'translate-x-10': alarmChecked }"
 								></div>
+							</div>
+						</div>
+					</div>
+					<div
+						v-if="smartAlarmEnabled"
+						class="flex justify-between items-center mb-3"
+					>
+						<div class="flex flex-col">
+							<h2 class="ml-2 text-xl text-left font-bold">
+								Enable Smart Alarm
+							</h2>
+							<h3 class="ml-2 text-left">
+								Alarm will automatically turn off during
+								nighttime
+							</h3>
+						</div>
+						<div
+							class="flex min-w-max justify-between items-center"
+							@click="toggleSmartAlarm()"
+						>
+							<div
+								class="
+									flex
+									w-20
+									h-10
+									items-center
+									bg-gray-300
+									rounded-full
+									p-1
+									duration-300
+									ease-in-out
+								"
+								:class="{ 'bg-green-400': smartAlarmChecked }"
+							>
+								<div
+									class="
+										bg-white
+										w-8
+										h-8
+										rounded-full
+										shadow-md
+										transform
+										duration-300
+										ease-in-out
+									"
+									:class="{
+										'translate-x-10': smartAlarmChecked,
+									}"
+								></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div>
+						<div class="flex justify-between items-center mt-3">
+							<div class="flex flex-col">
+								<h2 class="ml-2 text-xl text-left font-bold">
+									Enable Display
+								</h2>
+								<h3 class="ml-2 text-left">
+									Turn on the builtin display and show
+									information
+								</h3>
+							</div>
+							<div
+								class="flex justify-between items-center"
+								@click="toggleDisplay()"
+							>
+								<div
+									class="
+										w-20
+										h-10
+										flex
+										items-center
+										bg-gray-300
+										rounded-full
+										p-1
+										duration-300
+										ease-in-out
+									"
+									:class="{ 'bg-green-400': displayChecked }"
+								>
+									<div
+										class="
+											bg-white
+											w-8
+											h-8
+											rounded-full
+											shadow-md
+											transform
+											duration-300
+											ease-in-out
+										"
+										:class="{
+											'translate-x-10': displayChecked,
+										}"
+									></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div
+						v-if="smartDisplayEnabled"
+						class="ease-in-out duration-1000"
+					>
+						<div class="flex justify-between items-center mt-3">
+							<div class="flex flex-col">
+								<h2 class="ml-2 text-xl text-left font-bold">
+									Enable Smart Display
+								</h2>
+								<h3 class="ml-2 text-left">
+									The Display will automatically turn off
+									during nighttime
+								</h3>
+							</div>
+							<div
+								class="flex justify-between items-center"
+								@click="toggleSmartDisplay()"
+							>
+								<div
+									class="
+										w-20
+										h-10
+										flex
+										items-center
+										bg-gray-300
+										rounded-full
+										p-1
+										duration-300
+										ease-in-out
+									"
+									:class="{
+										'bg-green-400': smartDisplayChecked,
+									}"
+								>
+									<div
+										class="
+											bg-white
+											w-8
+											h-8
+											rounded-full
+											shadow-md
+											transform
+											duration-300
+											ease-in-out
+										"
+										:class="{
+											'translate-x-10':
+												smartDisplayChecked,
+										}"
+									></div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -96,7 +221,11 @@ export default defineComponent({
 	data: function() {
 		return {
 			alarmChecked: this.responseData.alarmEnabled,
-			displayChecked: this.responseData.displayEnabled
+			displayChecked: this.responseData.displayEnabled,
+			smartAlarmChecked: false,
+			smartDisplayChecked: false,
+			smartAlarmEnabled: false,
+			smartDisplayEnabled: false
 		}
 	},
 	watch: {
@@ -108,15 +237,27 @@ export default defineComponent({
 	methods: {
 		toggleAlarm: function() {
 			this.alarmChecked = !this.alarmChecked
+			this.smartAlarmEnabled = this.alarmChecked && true
+
 			axios.post('http://localhost:5000/api/controls/alarm/' + this.alarmChecked).then((response: any) => {
 				console.log(response)
 			})
 		},
 		toggleDisplay: function() {
 			this.displayChecked = !this.displayChecked
+			this.smartDisplayEnabled = this.displayChecked && true
+
 			axios.post('http://localhost:5000/api/controls/display/' + this.displayChecked).then((response: any) => {
 				console.log(response)
 			})
+		},
+		toggleSmartAlarm: function() {
+			this.smartAlarmChecked = !this.smartAlarmChecked
+			// todo
+		},
+		toggleSmartDisplay: function() {
+			this.smartDisplayChecked = !this.smartDisplayChecked
+			// todo
 		}
 	}
 })
