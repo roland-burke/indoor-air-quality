@@ -47,19 +47,19 @@
 						</div>
 						<div>
 							<div class="text-left">
-								{{ this.responseData.temperature }} °C
+								{{ this.responseData.temperature.toFixed(1) }} °C
 							</div>
 							<div class="text-left">
-								{{ this.responseData.humidity }} %
+								{{ this.responseData.humidity.toFixed(0) }} %
 							</div>
 							<div class="text-left">
-								{{ this.responseData.pressure }} hPa
+								{{ this.responseData.pressure.toFixed(0) }} hPa
 							</div>
 							<div class="text-left">
-								{{ this.responseData.tvoc }}
+								{{ this.responseData.tvoc.toFixed(0) }}
 							</div>
 							<div class="text-left">
-								{{ this.responseData.co2 }} ppm
+								{{ this.responseData.co2.toFixed(0) }} ppm
 							</div>
 						</div>
 					</div>

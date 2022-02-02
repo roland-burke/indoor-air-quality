@@ -238,7 +238,8 @@ export default defineComponent({
 		toggleAlarm: function() {
 			this.alarmChecked = !this.alarmChecked
 			this.smartAlarmEnabled = this.alarmChecked && true
-			axios.post('http://localhost:5000/api/controls/alarm/' + this.alarmChecked).then((response: any) => {
+			var url = document.location.protocol + '//' + document.location.host + '/api/controls/alarm/'
+			axios.post(url + this.alarmChecked).then((response: any) => {
 				/*
 				if (response.data.status !== 'success') {
 					this.alarmChecked = this.smartAlarmEnabled = false
@@ -250,8 +251,8 @@ export default defineComponent({
 		toggleDisplay: function() {
 			this.displayChecked = !this.displayChecked
 			this.smartDisplayEnabled = this.displayChecked && true
-
-			axios.post('http://localhost:5000/api/controls/display/' + this.displayChecked).then((response: any) => {
+			var url = document.location.protocol + '//' + document.location.host + '/api/controls/display/'
+			axios.post(url + this.displayChecked).then((response: any) => {
 				/*
 				if (response.data.status !== 'success') {
 					this.displayChecked = this.smartDisplayEnabled = false

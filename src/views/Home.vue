@@ -82,11 +82,13 @@ export default defineComponent({
 		start: function() {
 			setInterval(() => {
 				this.fetchData()
-			}, 5000)
+			}, 2000)
 		},
 
 		fetchData: function() {
-			axios.get('http://localhost:5000/api/data').then((response: any) => {
+			var url = document.location.protocol + '//' + document.location.host + '/api/data'
+			console.log(url)
+			axios.get(url).then((response: any) => {
 				console.log(response)
 				this.responseData = ResponseData.of(response.data)
 			})
