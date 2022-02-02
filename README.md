@@ -32,3 +32,9 @@ The used protocol for communicating with the display is SPI.
 	RES  -->  GPIO 19
 	DC   -->  GPIO 13
 	CS   -->  SPI_CE0_N (GPIO 08)
+	
+	LDR - RaspberryPi
+	A    -->  3v3
+	B    -->  GPIO 4
+	B    -->  GND (with 15.1K resistance)
+	
