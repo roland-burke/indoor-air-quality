@@ -19,6 +19,16 @@ npm run build
 ```
 npm run lint
 ```
+## Connections
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+The used protocol for communicating with the display is SPI.
+
+	Display - RaspberryPi
+
+	GND  -->  GND
+	VDD  -->  3v3
+	SCK  -->  SPI_CLK (GPIO 11)
+	SDA  -->  SPI_MOSI (GPIO 10)
+	RES  -->  GPIO 19
+	DC   -->  GPIO 13
+	CS   -->  SPI_CE0_N (GPIO 08)
