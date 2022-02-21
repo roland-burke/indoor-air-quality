@@ -1,5 +1,9 @@
 # general
 from cProfile import run
+from concurrent.futures import thread
+from curses.ascii import NUL
+from math import fabs
+from ntpath import join
 from signal import alarm
 import psutil # for uptime
 import time
@@ -47,6 +51,8 @@ font = ImageFont.load_default()
 image = Image.new('1',(128,64))
 draw = ImageDraw.Draw(image)
 
+displayCleared = False
+
 draw.text((22, 30), "INITIALIZING", font=font, fill=255)
 oled.image(image)
 oled.show()
@@ -58,58 +64,61 @@ LDR_PIN=4 # input 1 means Bright
 GPIO.setup(LDR_PIN,GPIO.IN)
 
 
-def ldr_thread():
-	global displayThread
-	while True:
-		if GPIO.input(LDR_PIN) == 1:
-			if not displayThread.is_alive():
-				displayThread.running = True # Bright
-				displayThread.start()
-		else:
-			if displayThread.is_alive():
-				displayThread.running = False # Dark
-		sleep(1)
+def updateDisplay():
+    # cleanup display
+	draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0)
+    
+	# Device name
+	draw.text((x_start, 0), " Hostname:", font=font, fill=255)
+	draw.text((x_space,0), socket.gethostname(), font=font, fill=255)
+ 
+	# Temperature
+	draw.text((x_start,y_start), " Temp:", font=font, fill=255)
+	draw.text((x_space,y_start), "{:.1f} C".format(getSensorData()['temperature']), fill=255)
+ 
+	# Huimidty
+	draw.text((x_start,y_start + 10), " Humidity:", font=font, fill=255)
+	draw.text((x_space,y_start + 10), "{:.0f} %".format(getSensorData()['humidity']), font=font, fill=255)
+ 
+	# Pressure
+	draw.text((x_start,y_start + 20), " Pressure:", font=font, fill=255)
+	draw.text((x_space,y_start + 20), "{:.0f} hPa".format(getSensorData()['pressure']), font=font, fill=255)
+ 
+	#TVOC
+	draw.text((x_start,y_start + 30), " TVOC:", font=font, fill=255)
+	draw.text((x_space,y_start + 30), "{}".format(100), font=font, fill=255)
+ 
+	#CO2
+	draw.text((x_start,y_start + 40), " CO2:", font=font, fill=255)
+	draw.text((x_space,y_start + 40), "{}".format(800), font=font, fill=255)
+	
+	oled.image(image)
+	oled.show()
+
 
 def display_thread():
-	t = threading.currentThread()
-	while getattr(t, "running", True):
-		draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0)
-		# Device name
-		draw.text((x_start, 0), " Hostname:", font=font, fill=255)
-		draw.text((x_space,0), socket.gethostname(), font=font, fill=255)
+	while True:
+		if GPIO.input(LDR_PIN) == 1:
+			updateDisplay() # Bright
+			displayCleared = False
+		else:
+			if not displayCleared:
+				draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0) # Dark
+				oled.image(image)
+				oled.show()
+				displayCleared = True
 
-		# Temperature
-		draw.text((x_start,y_start), " Temp:", font=font, fill=255)
-		draw.text((x_space,y_start), "{:.1f} C".format(bme280.temperature), fill=255)
-
-		# Huimidty
-		draw.text((x_start,y_start + 10), " Humidity:", font=font, fill=255)
-		draw.text((x_space,y_start + 10), "{:.0f} %".format(bme280.humidity), font=font, fill=255)
-
-		# Pressure
-		draw.text((x_start,y_start + 20), " Pressure:", font=font, fill=255)
-		draw.text((x_space,y_start + 20), "{:.0f} hPa".format(bme280.pressure), font=font, fill=255)
-
-		#TVOC
-		draw.text((x_start,y_start + 30), " TVOC:", font=font, fill=255)
-		draw.text((x_space,y_start + 30), "{}".format(100), font=font, fill=255)
-
-		#CO2
-		draw.text((x_start,y_start + 40), " CO2:", font=font, fill=255)
-		draw.text((x_space,y_start + 40), "{}".format(800), font=font, fill=255)
-
-		oled.image(image)
-		oled.show()
-		sleep(2)
-	draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0)
+		sleep(1)
 
 displayThread = Thread(target = display_thread)
-ldrThread = Thread(target = ldr_thread)
 
 # initialize BME280
 # Remember to enable I2C
 i2c = board.I2C()
-bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
+try:
+	bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
+except:
+	bme280 = None
 
 # initialize LDR = Light Dependendent Resistor
 GPIO.setmode(GPIO.BCM)
@@ -243,5 +252,4 @@ def controlDisplay(value):
 
 if __name__ == '__main__':
     displayThread.start()
-    ldrThread.start()
     app.run(debug=False, port=5000, host='0.0.0.0')
