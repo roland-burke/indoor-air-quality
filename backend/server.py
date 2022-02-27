@@ -11,95 +11,31 @@ from time import sleep
 import json
 import socket
 from threading import Thread
-import adafruit_ccs811
+import data_read
+import display
+import database
 
 # webserver
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 
 # hardware
-import board
-import busio
-import digitalio
-import RPi.GPIO as GPIO
+#import board
+#import busio
+#import digitalio
+#import RPi.GPIO as GPIO
 
-# display
-from PIL import Image, ImageDraw, ImageFont
-import adafruit_ssd1306
-
-# sensor
-from adafruit_bme280 import basic as adafruit_bme280
-
-WIDTH = 128
-HEIGHT = 64
-
-x_start = 0
-x_space = 72
-y_start = 14
-y_space = 10
-
-# initialize Display
-spi = busio.SPI(board.SCK, MOSI=board.MOSI)
-reset_pin = digitalio.DigitalInOut(board.D19)
-cs_pin = digitalio.DigitalInOut(board.D8)
-dc_pin = digitalio.DigitalInOut(board.D13)
-
-oled = adafruit_ssd1306.SSD1306_SPI(WIDTH, HEIGHT, spi, dc_pin, reset_pin, cs_pin)
-
-# setup Display
-font = ImageFont.load_default()
-image = Image.new('1',(128,64))
-draw = ImageDraw.Draw(image)
-
-displayCleared = False
-
-draw.text((22, 30), "INITIALIZING", font=font, fill=255)
-oled.image(image)
-oled.show()
-sleep(0.5)
 
 # initialize LDR = Light Dependendent Resistor
-GPIO.setmode(GPIO.BCM)
-LDR_PIN=4 # input 1 means Bright
-GPIO.setup(LDR_PIN,GPIO.IN)
-
-
-def updateDisplay():
-    # cleanup display
-	draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0)
-    
-	# Device name
-	draw.text((x_start, 0), " Hostname:", font=font, fill=255)
-	draw.text((x_space,0), socket.gethostname(), font=font, fill=255)
- 
-	# Temperature
-	draw.text((x_start,y_start), " Temp:", font=font, fill=255)
-	draw.text((x_space,y_start), "{:.1f} C".format(getSensorData()['temperature']), fill=255)
- 
-	# Huimidty
-	draw.text((x_start,y_start + 10), " Humidity:", font=font, fill=255)
-	draw.text((x_space,y_start + 10), "{:.0f} %".format(getSensorData()['humidity']), font=font, fill=255)
- 
-	# Pressure
-	draw.text((x_start,y_start + 20), " Pressure:", font=font, fill=255)
-	draw.text((x_space,y_start + 20), "{:.0f} hPa".format(getSensorData()['pressure']), font=font, fill=255)
- 
-	#TVOC
-	draw.text((x_start,y_start + 30), " TVOC:", font=font, fill=255)
-	draw.text((x_space,y_start + 30), "{}".format(getSensorData()['tvoc']), font=font, fill=255)
- 
-	#CO2
-	draw.text((x_start,y_start + 40), " CO2:", font=font, fill=255)
-	draw.text((x_space,y_start + 40), "{}".format(getSensorData()['co2']), font=font, fill=255)
-	
-	oled.image(image)
-	oled.show()
-
+def initializeLDR():
+    GPIO.setmode(GPIO.BCM)
+    LDR_PIN=4 # input 1 means Bright
+    GPIO.setup(LDR_PIN,GPIO.IN)
 
 def display_thread():
     while True:
         if GPIO.input(LDR_PIN) == 1:
-            updateDisplay() # Bright
+            updateDisplay(socket.gethostname(), getSensorData()) # Bright
             displayCleared = False
         else:
            if not displayCleared:
@@ -111,21 +47,6 @@ def display_thread():
 
 
 displayThread = Thread(target = display_thread)
-
-# initialize BME280
-# Remember to enable I2C
-i2c_bme280 = board.I2C()
-try:
-	bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c_bme280, address=0x76)
-except:
-	bme280 = None
-
-i2c_ccs811 = busio.I2C(board.SCL, board.SDA)
-try:
-	ccs811 = adafruit_ccs811.CCS811(i2c_ccs811)
-except:
-	ccs811 = None
-
 
 # initialize webserver
 
@@ -157,56 +78,22 @@ def loadControls():
 	controlsFile.close()
 
 def setup():
-	loadControls()
-	saveControls()
-	print(alarmEnabled)
-	print(displayEnabled)
-
-
-setup()
-
-def getUptime():
-    uptime = time.time() - psutil.boot_time()
-    return time.strftime('%H:%M:%S', time.gmtime(uptime))
-
-def getSensorData():
     try:
-        temperature = bme280.temperature
-        humidity = bme280.humidity
-        pressure = bme280.pressure
-        tvoc = ccs811.tvoc
-        co2 = ccs811.eco2
-    except:
-        temperature = -1
-        humidity = -1
-        pressure = -1
-        tvoc = -1
-        co2 = -1
+        display.initialize
+    except Exception as e:
+        print("Failed to initialize display:", e)
 
-    data = {
-		'temperature' : float("{:.2f}".format(temperature)),
-		'humidity': float("{:.2f}".format(humidity)),
-		'pressure': float("{:.2f}".format(pressure)),
-        'tvoc': tvoc,
-        'co2': co2
-	}
-    return data
+    try:
+        initializeLDR()
+    except Exception as e:
+        print("Failed to initialize LDR:", e)
 
-def getData():
-    global alarmEnabled
-    global displayEnabled
-    data = {
-         'hostname' : socket.gethostname(),
-         'temperature': getSensorData().get('temperature'),
-         'humidity': getSensorData().get('humidity'),
-         'pressure': getSensorData().get('pressure'),
-         'co2': -1,
-         'tvoc': -1,
-         'uptime': getUptime(),
-         'alarmEnabled': alarmEnabled,
-         'displayEnabled': displayEnabled
-    }
-    return data
+    data_read.initializeSensors()
+
+    loadControls()
+    saveControls()
+    print("Alarm:", alarmEnabled)
+    print("Display:", displayEnabled)
 
 @app.route('/', methods = ['GET'])
 def welcome():
@@ -258,6 +145,7 @@ def controlDisplay(value):
 
 
 if __name__ == '__main__':
+    setup()
     myThread = displayThread.start()
     thread.daemon=True
 
