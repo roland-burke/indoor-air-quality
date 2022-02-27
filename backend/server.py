@@ -11,7 +11,7 @@ from time import sleep
 import json
 import socket
 from threading import Thread
-import threading
+import adafruit_ccs811
 
 # webserver
 from flask import Flask, send_from_directory
@@ -86,44 +86,45 @@ def updateDisplay():
  
 	#TVOC
 	draw.text((x_start,y_start + 30), " TVOC:", font=font, fill=255)
-	draw.text((x_space,y_start + 30), "{}".format(100), font=font, fill=255)
+	draw.text((x_space,y_start + 30), "{}".format(getSensorData()['tvoc']), font=font, fill=255)
  
 	#CO2
 	draw.text((x_start,y_start + 40), " CO2:", font=font, fill=255)
-	draw.text((x_space,y_start + 40), "{}".format(800), font=font, fill=255)
+	draw.text((x_space,y_start + 40), "{}".format(getSensorData()['co2']), font=font, fill=255)
 	
 	oled.image(image)
 	oled.show()
 
 
 def display_thread():
-	while True:
-		if GPIO.input(LDR_PIN) == 1:
-			updateDisplay() # Bright
-			displayCleared = False
-		else:
-			if not displayCleared:
-				draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0) # Dark
-				oled.image(image)
-				oled.show()
-				displayCleared = True
+    while True:
+        if GPIO.input(LDR_PIN) == 1:
+            updateDisplay() # Bright
+            displayCleared = False
+        else:
+           if not displayCleared:
+                draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0) # Dark
+                oled.image(image)
+                oled.show()
+                displayCleared = True
+        sleep(1)
 
-		sleep(1)
 
 displayThread = Thread(target = display_thread)
 
 # initialize BME280
 # Remember to enable I2C
-i2c = board.I2C()
+i2c_bme280 = board.I2C()
 try:
-	bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c, address=0x76)
+	bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c_bme280, address=0x76)
 except:
 	bme280 = None
 
-# initialize LDR = Light Dependendent Resistor
-GPIO.setmode(GPIO.BCM)
-LDR_PIN=4
-GPIO.setup(LDR_PIN,GPIO.IN)
+i2c_ccs811 = busio.I2C(board.SCL, board.SDA)
+try:
+	ccs811 = adafruit_ccs811.CCS811(i2c_ccs811)
+except:
+	ccs811 = None
 
 
 # initialize webserver
@@ -169,21 +170,27 @@ def getUptime():
     return time.strftime('%H:%M:%S', time.gmtime(uptime))
 
 def getSensorData():
-	try:
-		temperature = bme280.temperature
-		humidity = bme280.humidity
-		pressure = bme280.pressure
-	except:
-		temperature = -1
-		humidity = -1
-		pressure = -1
-     
-	data = {
+    try:
+        temperature = bme280.temperature
+        humidity = bme280.humidity
+        pressure = bme280.pressure
+        tvoc = ccs811.tvoc
+        co2 = ccs811.eco2
+    except:
+        temperature = -1
+        humidity = -1
+        pressure = -1
+        tvoc = -1
+        co2 = -1
+
+    data = {
 		'temperature' : float("{:.2f}".format(temperature)),
 		'humidity': float("{:.2f}".format(humidity)),
-		'pressure': float("{:.2f}".format(pressure))
+		'pressure': float("{:.2f}".format(pressure)),
+        'tvoc': tvoc,
+        'co2': co2
 	}
-	return data
+    return data
 
 def getData():
     global alarmEnabled
@@ -251,5 +258,7 @@ def controlDisplay(value):
 
 
 if __name__ == '__main__':
-    displayThread.start()
+    myThread = displayThread.start()
+    thread.daemon=True
+
     app.run(debug=False, port=5000, host='0.0.0.0')
