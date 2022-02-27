@@ -5,13 +5,14 @@ from curses.ascii import NUL
 from math import fabs
 from ntpath import join
 from signal import alarm
-import psutil # for uptime
-import time
 from time import sleep
 import json
-import socket
 from threading import Thread
-import data_read
+import socket
+import time
+import psutil # for uptime
+
+import sensors
 import display
 import database
 
@@ -35,7 +36,7 @@ def initializeLDR():
 def display_thread():
     while True:
         if GPIO.input(LDR_PIN) == 1:
-            updateDisplay(socket.gethostname(), getSensorData()) # Bright
+            updateDisplay(socket.gethostname(), sensors.getData()) # Bright
             displayCleared = False
         else:
            if not displayCleared:
@@ -77,6 +78,26 @@ def loadControls():
 		displayEnabled = True
 	controlsFile.close()
 
+def getUptime():
+    uptime = time.time() - psutil.boot_time()
+    return time.strftime('%H:%M:%S', time.gmtime(uptime))
+
+def getData():
+    global alarmEnabled
+    global displayEnabled
+    data = {
+         'hostname' : socket.gethostname(),
+         'temperature': sensors.getSensorData().get('temperature'),
+         'humidity': sensors.getSensorData().get('humidity'),
+         'pressure': sensors.getSensorData().get('pressure'),
+         'co2': -1,
+         'tvoc': -1,
+         'uptime': getUptime(),
+         'alarmEnabled': alarmEnabled,
+         'displayEnabled': displayEnabled
+    }
+    return data
+
 def setup():
     try:
         display.initialize
@@ -88,7 +109,7 @@ def setup():
     except Exception as e:
         print("Failed to initialize LDR:", e)
 
-    data_read.initializeSensors()
+    sensors.initialize()
 
     loadControls()
     saveControls()

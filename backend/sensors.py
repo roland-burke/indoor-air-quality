@@ -4,7 +4,7 @@
 
 #import board
 
-def initializeSensors():
+def initialize():
     # initialize BME280
     # Remember to enable I2C
     try:
@@ -21,11 +21,7 @@ def initializeSensors():
         print("Failed to initialize ccs811 sensor:", e)
         ccs811 = None
 
-def getUptime():
-    uptime = time.time() - psutil.boot_time()
-    return time.strftime('%H:%M:%S', time.gmtime(uptime))
-
-def getSensorData():
+def getData():
     try:
         temperature = bme280.temperature
         humidity = bme280.humidity
@@ -46,20 +42,4 @@ def getSensorData():
         'tvoc': tvoc,
         'co2': co2
 	}
-    return data
-
-def getData():
-    global alarmEnabled
-    global displayEnabled
-    data = {
-         'hostname' : socket.gethostname(),
-         'temperature': getSensorData().get('temperature'),
-         'humidity': getSensorData().get('humidity'),
-         'pressure': getSensorData().get('pressure'),
-         'co2': -1,
-         'tvoc': -1,
-         'uptime': getUptime(),
-         'alarmEnabled': alarmEnabled,
-         'displayEnabled': displayEnabled
-    }
     return data
