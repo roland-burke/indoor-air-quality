@@ -21,12 +21,12 @@ def writePoint(point):
 
 def saveTemperature(host, temperature):
     point = Point("indoor_temperature").tag("host", host).field("temperature", temperature).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(ponit)
+    writePoint(point)
 
 def saveHumidity(host, humidity):
     point = Point("indoor_humidity").tag("host", host).field("humidity", humidity).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(ponit)
+    writePoint(point)
 
 def savePressure(host, humidity):
     point = Point("air_pressure").tag("host", host).field("pressure", humidity).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(ponit)
+    writePoint(point)

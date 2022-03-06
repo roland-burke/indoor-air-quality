@@ -4,6 +4,9 @@
 
 #import board
 
+bme280 = None
+ccs811 = None
+
 def initialize():
     # initialize BME280
     # Remember to enable I2C

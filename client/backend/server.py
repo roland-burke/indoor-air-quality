@@ -14,7 +14,6 @@ import psutil # for uptime
 
 import sensors
 import display
-import database
 
 # webserver
 from flask import Flask, send_from_directory
@@ -87,9 +86,9 @@ def getData():
     global displayEnabled
     data = {
          'hostname' : socket.gethostname(),
-         'temperature': sensors.getSensorData().get('temperature'),
-         'humidity': sensors.getSensorData().get('humidity'),
-         'pressure': sensors.getSensorData().get('pressure'),
+         'temperature': sensors.getData().get('temperature'),
+         'humidity': sensors.getData().get('humidity'),
+         'pressure': sensors.getData().get('pressure'),
          'co2': -1,
          'tvoc': -1,
          'uptime': getUptime(),
