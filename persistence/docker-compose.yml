@@ -1,10 +1,7 @@
 version: '3.9'
 
 services:
-  influxdb:
-    build: 
-      context: .
-      network: custom_iaq_network
+  iaq-influxdb:
     image: influxdb:2.1.1-alpine
     container_name: iaq-influxdb
     environment:
@@ -21,11 +18,13 @@ services:
     volumes:
       - "influxdb-data:/var/lib/influxdb2"
       - "influxdb-config:/etc/influxdb2"
+    healthcheck:
+      test: ["CMD", "curl", "-sI", "http://127.0.0.1:8086/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 8
 
-  grafana:
-    build:
-      context: .
-      network: custom_iaq_network
+  iaq-grafana:
     image: grafana/grafana
     container_name: iaq-grafana
     restart: "always"
@@ -33,6 +32,20 @@ services:
       - "127.0.0.1:3000:3000"
     volumes:
       - "grafana-storage:/var/lib/grafana"
+
+  iaq-backend:
+    build: "."
+    container_name: iaq-backend
+    environment:
+      DB_URL: http://influxdb:8086
+      DB_TOKEN: ${INFLUXDB_ADMIN_TOKEN}
+      DATA_URL: http://localhost:5000/api/data
+    restart: "always"
+    depends_on:
+      iaq-influxdb:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:9006:9006"
 
 volumes:
   grafana-storage:

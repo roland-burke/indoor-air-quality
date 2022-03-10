@@ -11,6 +11,7 @@ from threading import Thread
 import socket
 import time
 import psutil # for uptime
+import random
 
 import sensors
 import display
@@ -25,6 +26,10 @@ from flask_cors import CORS
 #import digitalio
 #import RPi.GPIO as GPIO
 
+hostname = socket.gethostname()
+room = "rolands-zimmer"
+xDistance = 0 # distance to next vertical wall
+yDistance = 0 # height, distance from ground
 
 # initialize LDR = Light Dependendent Resistor
 def initializeLDR():
@@ -85,17 +90,32 @@ def getData():
     global alarmEnabled
     global displayEnabled
     data = {
-         'hostname' : socket.gethostname(),
+         'hostname' : hostname,
          'temperature': sensors.getData().get('temperature'),
          'humidity': sensors.getData().get('humidity'),
          'pressure': sensors.getData().get('pressure'),
          'co2': -1,
          'tvoc': -1,
          'uptime': getUptime(),
+         'room': room,
          'alarmEnabled': alarmEnabled,
          'displayEnabled': displayEnabled
     }
-    return data
+    return getMockData()
+
+def getMockData():
+    return {
+         'hostname' : hostname,
+         'temperature': float("{:.2f}".format(random.uniform(21.0, 21.5))),
+         'humidity': float("{:.2f}".format(random.uniform(40.0, 42.0))),
+         'pressure': float("{:.2f}".format(random.uniform(972, 974))),
+         'co2': random.randint(800,820),
+         'tvoc': random.randint(120,130),
+         'uptime': getUptime(),
+         'room': room,
+         'alarmEnabled': alarmEnabled,
+         'displayEnabled': displayEnabled
+    }
 
 def setup():
     try:
