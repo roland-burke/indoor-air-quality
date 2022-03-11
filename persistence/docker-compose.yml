@@ -19,10 +19,10 @@ services:
       - "influxdb-data:/var/lib/influxdb2"
       - "influxdb-config:/etc/influxdb2"
     healthcheck:
-      test: ["CMD", "curl", "-sI", "http://127.0.0.1:8086/ping"]
-      interval: 10s
+      test: ["CMD", "influx", "ping"]
+      interval: 5s
       timeout: 5s
-      retries: 8
+      retries: 5
 
   iaq-grafana:
     image: grafana/grafana

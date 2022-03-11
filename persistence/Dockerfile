@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 FROM python:3-alpine
 
 RUN pip install --upgrade pip
@@ -21,4 +19,4 @@ ENV PATH="/home/pythonUser/.local/bin:${PATH}"
 COPY --chown=pythonUser:pythonUser . .
 
 
-CMD [ "python3", "./backend.py" ]
+ENTRYPOINT [ "python3", "backend.py" ]
