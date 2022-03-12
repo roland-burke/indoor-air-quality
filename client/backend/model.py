@@ -31,7 +31,7 @@ class DataModel:
         return self
 
     def toJson(self):
-        return {
+        data = {
          'meta': {
             'hostname': self.hostname,
             'uptime': self.uptime,
@@ -49,3 +49,4 @@ class DataModel:
             'tvoc': self.tvoc,
             }
         }
+        return data

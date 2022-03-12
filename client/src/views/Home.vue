@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
-		<Dashboard :responseData=this.responseData />
-		<Controls :responseData=this.responseData />
+		<Dashboard :responseData="this.responseData" />
+		<Controls :responseData="this.responseData" />
 	</div>
 </template>
 
@@ -14,6 +14,7 @@ import axios from 'axios'
 export class ResponseData {
 	hostname: string
 	uptime: string
+	room: string
 	temperature: number
 	humidity: number
 	pressure: number
@@ -25,6 +26,7 @@ export class ResponseData {
 	constructor(
 		hostname: string,
 		uptime: string,
+		room: string,
 		temperature: number,
 		humidity: number,
 		pressure: number,
@@ -35,6 +37,7 @@ export class ResponseData {
 	) {
 		this.hostname = hostname
 		this.uptime = uptime
+		this.room = room
 		this.temperature = temperature
 		this.humidity = humidity
 		this.pressure = pressure
@@ -46,20 +49,21 @@ export class ResponseData {
 
 	static of(data: any): ResponseData {
 		return new ResponseData(
-			data.hostname,
-			data.uptime,
-			data.temperature,
-			data.humidity,
-			data.pressure,
-			data.co2,
-			data.tvoc,
-			data.alarmEnabled,
-			data.displayEnabled
+			data.meta.hostname,
+			data.meta.uptime,
+			data.meta.room,
+			data.sensors.temperature,
+			data.sensors.humidity,
+			data.sensors.pressure,
+			data.sensors.co2,
+			data.sensors.tvoc,
+			data.controls.alarmEnabled,
+			data.controls.displayEnabled
 		)
 	}
 
 	static default() {
-		return new ResponseData('n.A.', 'n.A.', 0, 0, 0, 0, 0, false, false)
+		return new ResponseData('n.A.', 'n.A.', 'n.A.', 0, 0, 0, 0, 0, false, false)
 	}
 }
 
@@ -86,7 +90,8 @@ export default defineComponent({
 		},
 
 		fetchData: function() {
-			var url = document.location.protocol + '//' + document.location.host + '/api/data'
+			// var url = document.location.protocol + '//' + document.location.host + '/api/data'
+			var url = 'http://localhost:5000/api/data'
 			console.log(url)
 			axios.get(url).then((response: any) => {
 				console.log(response)
