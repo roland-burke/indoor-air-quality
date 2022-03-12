@@ -116,9 +116,9 @@ def getMockData():
     pressure = float("{:.2f}".format(random.uniform(972, 974))),
     co2 = random.randint(800,820),
     tvoc = random.randint(120,130),
-
-    data = DataModel.of(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=co2, tvoc=tvoc, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
-    return data
+    data = DataModel()
+    data = data.of(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=co2, tvoc=tvoc, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    return data.toJson()
 
 def setup():
     global displayWorking

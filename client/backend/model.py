@@ -1,6 +1,3 @@
-from turtle import up
-
-
 class DataModel:
     # meta data
     hostname = ""
