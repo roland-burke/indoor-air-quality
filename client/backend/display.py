@@ -1,5 +1,6 @@
 # display
 from PIL import Image, ImageDraw, ImageFont
+from time import sleep
 #import adafruit_ssd1306
 
 WIDTH = 128
@@ -11,23 +12,28 @@ y_start = 14
 y_space = 10
 
 def initialize():
-    spi = busio.SPI(board.SCK, MOSI=board.MOSI)
-    reset_pin = digitalio.DigitalInOut(board.D19)
-    cs_pin = digitalio.DigitalInOut(board.D8)
-    dc_pin = digitalio.DigitalInOut(board.D13)
-    oled = adafruit_ssd1306.SSD1306_SPI(WIDTH, HEIGHT, spi, dc_pin, reset_pin, cs_pin)
+    try:
+        spi = busio.SPI(board.SCK, MOSI=board.MOSI)
+        reset_pin = digitalio.DigitalInOut(board.D19)
+        cs_pin = digitalio.DigitalInOut(board.D8)
+        dc_pin = digitalio.DigitalInOut(board.D13)
+        oled = adafruit_ssd1306.SSD1306_SPI(WIDTH, HEIGHT, spi, dc_pin, reset_pin, cs_pin)
 
-    font = ImageFont.load_default()
-    image = Image.new('1',(128,64))
-    draw = ImageDraw.Draw(image)
+        font = ImageFont.load_default()
+        image = Image.new('1',(128,64))
+        draw = ImageDraw.Draw(image)
 
-    displayCleared = False
+        displayCleared = False
 
-    # show initial loading message
-    draw.text((22, 30), "INITIALIZING", font=font, fill=255)
-    oled.image(image)
-    oled.show()
-    sleep(0.5)
+        # show initial loading message
+        draw.text((22, 30), "INITIALIZING", font=font, fill=255)
+        oled.image(image)
+        oled.show()
+        sleep(0.5)
+        return True
+    except Exception as e:
+        print("Failed to initialize display:", e)
+        return False
 
 def updateDisplay(hostname, data):
     # cleanup display

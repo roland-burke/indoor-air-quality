@@ -7,22 +7,26 @@
 bme280 = None
 ccs811 = None
 
-def initialize():
-    # initialize BME280
-    # Remember to enable I2C
+# Remember to enable I2C
+def initializeBME280():
     try:
         i2c_bme280 = board.I2C()
         bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c_bme280, address=0x76)
+        return True
     except Exception as e:
         print("Failed to initialize bme280 sensor:", e)
         bme280 = None
+        return False
 
+def initializeCCS811():
     try:
         i2c_ccs811 = busio.I2C(board.SCL, board.SDA)
         ccs811 = adafruit_ccs811.CCS811(i2c_ccs811)
+        return True
     except Exception as e:
         print("Failed to initialize ccs811 sensor:", e)
         ccs811 = None
+        return False
 
 def getData():
     try:

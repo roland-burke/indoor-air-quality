@@ -15,6 +15,7 @@ import random
 
 import sensors
 import display
+from model import DataModel
 
 # webserver
 from flask import Flask, send_from_directory
@@ -30,12 +31,18 @@ hostname = socket.gethostname()
 room = "rolands-zimmer"
 xDistance = 0 # distance to next vertical wall
 yDistance = 0 # height, distance from ground
+displayWorking = False
+BME280Working = False
+CCS811Working = False
 
 # initialize LDR = Light Dependendent Resistor
 def initializeLDR():
-    GPIO.setmode(GPIO.BCM)
-    LDR_PIN=4 # input 1 means Bright
-    GPIO.setup(LDR_PIN,GPIO.IN)
+    try:
+        GPIO.setmode(GPIO.BCM)
+        LDR_PIN=4 # input 1 means Bright
+        GPIO.setup(LDR_PIN,GPIO.IN)
+    except Exception as e:
+        print("Failed to initialize LDR:", e)
 
 def display_thread():
     while True:
@@ -104,31 +111,25 @@ def getData():
     return getMockData()
 
 def getMockData():
-    return {
-         'hostname' : hostname,
-         'temperature': float("{:.2f}".format(random.uniform(21.0, 21.5))),
-         'humidity': float("{:.2f}".format(random.uniform(40.0, 42.0))),
-         'pressure': float("{:.2f}".format(random.uniform(972, 974))),
-         'co2': random.randint(800,820),
-         'tvoc': random.randint(120,130),
-         'uptime': getUptime(),
-         'room': room,
-         'alarmEnabled': alarmEnabled,
-         'displayEnabled': displayEnabled
-    }
+    temperature = float("{:.2f}".format(random.uniform(21.0, 21.5))),
+    humidity = float("{:.2f}".format(random.uniform(40.0, 42.0))),
+    pressure = float("{:.2f}".format(random.uniform(972, 974))),
+    co2 = random.randint(800,820),
+    tvoc = random.randint(120,130),
+
+    data = DataModel.of(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=co2, tvoc=tvoc, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    return data
 
 def setup():
-    try:
-        display.initialize
-    except Exception as e:
-        print("Failed to initialize display:", e)
+    global displayWorking
+    global BME280Working
+    global CCS811Working
 
-    try:
-        initializeLDR()
-    except Exception as e:
-        print("Failed to initialize LDR:", e)
+    displayWorking = display.initialize()
+    initializeLDR()
 
-    sensors.initialize()
+    BME280Working = sensors.initializeBME280()
+    CCS811Working = sensors.initializeCCS811()
 
     loadControls()
     saveControls()
