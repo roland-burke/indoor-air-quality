@@ -37,9 +37,10 @@ services:
     build: "."
     container_name: iaq-backend
     environment:
-      DB_URL: http://influxdb:8086
+      DB_URL: http://iaq-influxdb:8086
       DB_TOKEN: ${INFLUXDB_ADMIN_TOKEN}
-      DATA_URL: http://localhost:5000/api/data
+      DATA_URL: http://r-xps.fritz.box:5000/api/data
+      PYTHONUNBUFFERED: 1
     restart: "always"
     depends_on:
       iaq-influxdb:
