@@ -1,38 +1,37 @@
+from pickle import NONE
 from time import sleep
 import database
 import urllib.request
 import json
 import os
 
-data_url = os.environ['DATA_URL']
+client_url = os.environ['DATA_URL']
+INTERVAL = 2 # in seconds
 
-def saveToDabase(host, temperature, humidity, pressure, co2, tvoc):
+def saveToDatabase(host, temperature, humidity, pressure, co2, tvoc):
+    database.saveTemperature(host, temperature)
+    database.saveHumidity(host, humidity)
+    database.savePressure(host, pressure)
+    database.saveCo2(host, co2)
+    database.saveTvoc(host, tvoc)
+
+def fetchDataFromClient():
     try:
-        database.saveTemperature(host, temperature)
-        database.saveHumidity(host, humidity)
-        database.savePressure(host, pressure)
-        database.saveCo2(host, co2)
-        database.saveTvoc(host, tvoc)
-
+        response = urllib.request.urlopen(client_url).read()
+        return json.loads(response.decode('utf-8'))
     except Exception as e:
-        print("Saving data failed:", e)
+        print("Fetch data from {data_url} failed:", e)
+        return None
 
-def start():
+
+def fetchAndSave():
     while(True):
+        data = fetchDataFromClient()
+        if data != None:
+            saveToDatabase(data['hostname'], data['temperature'], data['humidity'], data['pressure'], data['co2'], data['tvoc'])
+        else:
+            print("No data was saved")
+        sleep(INTERVAL)
 
-        try:
-            response = urllib.request.urlopen(data_url).read()
-            jsonResponse = json.loads(response.decode('utf-8'))
-            host = jsonResponse['hostname']
-            #print(jsonResponse)
-            print("Host:", host)
-            print("Received temperature:", jsonResponse['temperature'])
-            print("Received humidity:", jsonResponse['humidity'])
-            print("Received pressure:", jsonResponse['pressure'])
-            saveToDabase(host, jsonResponse['temperature'], jsonResponse['humidity'], jsonResponse['pressure'], jsonResponse['co2'], jsonResponse['tvoc'])
-        except Exception as e:
-            print("Read data failed:", e)
-
-
-        sleep(2)
-start()
+if __name__ == '__main__':
+    fetchAndSave()

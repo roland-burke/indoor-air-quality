@@ -1,5 +1,3 @@
-from json.tool import main
-from time import sleep
 import os
 
 from influxdb_client import InfluxDBClient, Point, WritePrecision
@@ -14,28 +12,30 @@ db_url = os.environ['DB_URL']
 
 client = InfluxDBClient(url=db_url, token=token, org=org)
 
-def writePoint(point):
-    client = InfluxDBClient(url=db_url, token=token, org=org)
-    write_api = client.write_api(write_options=SYNCHRONOUS)
-    write_api.write(bucket, org, point)
-    client.close()
+def writePoint(host, description, fieldName, fieldValue):
+    point = Point(description).tag("host", host).field(fieldName, fieldValue).time(datetime.datetime.utcnow(), WritePrecision.NS)
+    client = None
+    try:
+        client = InfluxDBClient(url=db_url, token=token, org=org)
+        write_api = client.write_api(write_options=SYNCHRONOUS)
+        write_api.write(bucket, org, point)
+    except Exception as e:
+        print("Saving data to '{bucket}' on '{db_url}' failed:", e)
+    finally:
+        client.close()
+
 
 def saveTemperature(host, temperature):
-    point = Point("indoor_temperature").tag("host", host).field("temperature", temperature).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(point)
+    writePoint(host, "indoor_temperature", "temperature", temperature)
 
 def saveHumidity(host, humidity):
-    point = Point("indoor_humidity").tag("host", host).field("humidity", humidity).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(point)
+    writePoint(host, "indoor_humidity", "humidity", humidity)
 
 def savePressure(host, pressure):
-    point = Point("air_pressure").tag("host", host).field("pressure", pressure).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(point)
+    writePoint(host, "air_pressure", "pressure", pressure)
 
 def saveCo2(host, co2):
-    point = Point("co2").tag("host", host).field("co2", co2).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(point)
+    writePoint(host, "co2", "co2", co2)
 
 def saveTvoc(host, tvoc):
-    point = Point("co2").tag("host", host).field("tvoc", tvoc).time(datetime.datetime.utcnow(), WritePrecision.NS)
-    writePoint(point)
+    writePoint(host, "tvoc", "tvoc", tvoc)
