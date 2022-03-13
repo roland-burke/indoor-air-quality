@@ -96,18 +96,10 @@ def getUptime():
 def getData():
     global alarmEnabled
     global displayEnabled
-    data = {
-         'hostname' : hostname,
-         'temperature': sensors.getData().get('temperature'),
-         'humidity': sensors.getData().get('humidity'),
-         'pressure': sensors.getData().get('pressure'),
-         'co2': -1,
-         'tvoc': -1,
-         'uptime': getUptime(),
-         'room': room,
-         'alarmEnabled': alarmEnabled,
-         'displayEnabled': displayEnabled
-    }
+    temperature = sensors.getData().get('temperature')
+    humidity = sensors.getData().get('humidity')
+    pressure = sensors.getData().get('pressure')
+    data = DataModel(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=-1, tvoc=-1, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
     return getMockData()
 
 def getMockData():
@@ -116,8 +108,7 @@ def getMockData():
     pressure = float("{:.2f}".format(random.uniform(972, 974))),
     co2 = random.randint(800,820),
     tvoc = random.randint(120,130),
-    data = DataModel()
-    data = data.of(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=co2, tvoc=tvoc, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    data = DataModel(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=co2, tvoc=tvoc, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
     return data.toJson()
 
 def setup():

@@ -15,7 +15,7 @@ class DataModel:
     alarmEnabled = False
     displayEnabled = False
 
-    def of(self, host, room, uptime, temp, hum, pressure, co2, tvoc, alarmEnabled, displayEnabled):
+    def __init__(self, host, room, uptime, temp, hum, pressure, co2, tvoc, alarmEnabled, displayEnabled):
         self.hostname = host
         self.room = room
         self.uptime = uptime
@@ -28,7 +28,6 @@ class DataModel:
 
         self.alarmEnabled = alarmEnabled
         self.displayEnabled = displayEnabled
-        return self
 
     def toJson(self):
         data = {

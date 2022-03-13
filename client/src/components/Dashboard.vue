@@ -46,9 +46,7 @@
 							</div>
 						</div>
 						<div>
-							<div class="text-left">
-								{{ this.responseData.temperature.toFixed(1) }} °C
-							</div>
+							<div class="text-left">{{ this.responseData.temperature.toFixed(1) }} °C</div>
 							<div class="text-left">
 								{{ this.responseData.humidity.toFixed(0) }} %
 							</div>

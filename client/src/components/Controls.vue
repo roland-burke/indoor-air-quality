@@ -1,7 +1,16 @@
 <template>
 	<div class="flex justify-center">
 		<fieldset
-			class="mx-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl shadow-md border-blue-400"
+			class="
+				mx-5
+				p-4
+				w-5/6
+				max-w-2xl
+				border-4
+				rounded-xl
+				shadow-md
+				border-blue-400
+			"
 		>
 			<legend class="text-2xl px-2 text-left">Controls</legend>
 			<div class="divide-y divide-solid">
@@ -216,7 +225,8 @@ import axios from 'axios'
 export default defineComponent({
 	name: 'Controls',
 	props: {
-		responseData: ResponseData
+		responseData: ResponseData,
+		hostUrl: String
 	},
 	data: function() {
 		return {
@@ -238,8 +248,10 @@ export default defineComponent({
 		toggleAlarm: function() {
 			this.alarmChecked = !this.alarmChecked
 			this.smartAlarmEnabled = this.alarmChecked && true
-			var url = document.location.protocol + '//' + document.location.host + '/api/controls/alarm/'
-			axios.post(url + this.alarmChecked).then((response: any) => {
+
+			var completeUrl = this.hostUrl + '/api/controls/alarm/'
+
+			axios.post(completeUrl + this.alarmChecked).then((response: any) => {
 				/*
 				if (response.data.status !== 'success') {
 					this.alarmChecked = this.smartAlarmEnabled = false
@@ -251,8 +263,8 @@ export default defineComponent({
 		toggleDisplay: function() {
 			this.displayChecked = !this.displayChecked
 			this.smartDisplayEnabled = this.displayChecked && true
-			var url = document.location.protocol + '//' + document.location.host + '/api/controls/display/'
-			axios.post(url + this.displayChecked).then((response: any) => {
+			var completeUrl = this.hostUrl + '/api/controls/display/'
+			axios.post(completeUrl + this.displayChecked).then((response: any) => {
 				/*
 				if (response.data.status !== 'success') {
 					this.displayChecked = this.smartDisplayEnabled = false

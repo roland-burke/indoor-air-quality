@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<Dashboard :responseData="this.responseData" />
-		<Controls :responseData="this.responseData" />
+		<Controls :responseData="this.responseData" :hostUrl="this.getUrl()"/>
 	</div>
 </template>
 
@@ -52,11 +52,11 @@ export class ResponseData {
 			data.meta.hostname,
 			data.meta.uptime,
 			data.meta.room,
-			data.sensors.temperature,
-			data.sensors.humidity,
-			data.sensors.pressure,
-			data.sensors.co2,
-			data.sensors.tvoc,
+			data.sensors.temperature[0],
+			data.sensors.humidity[0],
+			data.sensors.pressure[0],
+			data.sensors.co2[0],
+			data.sensors.tvoc[0],
 			data.controls.alarmEnabled,
 			data.controls.displayEnabled
 		)
@@ -90,13 +90,16 @@ export default defineComponent({
 		},
 
 		fetchData: function() {
-			// var url = document.location.protocol + '//' + document.location.host + '/api/data'
-			var url = 'http://localhost:5000/api/data'
-			console.log(url)
-			axios.get(url).then((response: any) => {
+			axios.get(this.getUrl() + '/api/data').then((response: any) => {
 				console.log(response)
 				this.responseData = ResponseData.of(response.data)
 			})
+		},
+
+		getUrl: function() {
+			// var url = document.location.protocol + '//' + document.location.host
+			var url = 'http://localhost:5000'
+			return url
 		}
 	}
 })
