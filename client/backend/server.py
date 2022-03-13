@@ -20,6 +20,7 @@ from model import DataModel
 # webserver
 from flask import Flask, send_from_directory
 from flask_cors import CORS
+from flask import Response
 
 # hardware
 #import board
@@ -127,13 +128,17 @@ def setup():
     print("Alarm:", alarmEnabled)
     print("Display:", displayEnabled)
 
+# data must be a string
+def getResponse(data, statusCode):
+    return Response(data, status=statusCode, mimetype='application/json')
+
 @app.route('/', methods = ['GET'])
 def welcome():
 	return send_from_directory('static', 'index.html')
 
 @app.route('/api/data', methods = ['GET'])
 def data():
-	return getData()
+    return getResponse(json.dumps(getData()), 200)
 
 @app.route('/api/controls/alarm/<value>', methods = ['POST'])
 def controlAlarm(value):
