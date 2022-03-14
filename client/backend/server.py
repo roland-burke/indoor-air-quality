@@ -23,10 +23,7 @@ from flask_cors import CORS
 from flask import Response
 
 # hardware
-#import board
-#import busio
-#import digitalio
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 hostname = socket.gethostname()
 room = "rolands-zimmer"
@@ -36,11 +33,12 @@ displayWorking = False
 BME280Working = False
 CCS811Working = False
 
+LDR_PIN = 4 # input 1 means Bright
+
 # initialize LDR = Light Dependendent Resistor
 def initializeLDR():
     try:
         GPIO.setmode(GPIO.BCM)
-        LDR_PIN=4 # input 1 means Bright
         GPIO.setup(LDR_PIN,GPIO.IN)
     except Exception as e:
         print("Failed to initialize LDR:", e)
@@ -48,7 +46,7 @@ def initializeLDR():
 def display_thread():
     while True:
         if GPIO.input(LDR_PIN) == 1:
-            updateDisplay(socket.gethostname(), sensors.getData()) # Bright
+            display.update(socket.gethostname(), sensors.getData()) # Bright
             displayCleared = False
         else:
            if not displayCleared:

@@ -1,14 +1,16 @@
 # sensors
-#from adafruit_bme280 import basic as adafruit_bme280
-#import adafruit_ccs811
+from adafruit_bme280 import basic as adafruit_bme280
+import adafruit_ccs811
+import busio
 
-#import board
+import board
 
 bme280 = None
 ccs811 = None
 
 # Remember to enable I2C
 def initializeBME280():
+    global bme280
     try:
         i2c_bme280 = board.I2C()
         bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c_bme280, address=0x76)
@@ -19,6 +21,7 @@ def initializeBME280():
         return False
 
 def initializeCCS811():
+    global ccs811
     try:
         i2c_ccs811 = busio.I2C(board.SCL, board.SDA)
         ccs811 = adafruit_ccs811.CCS811(i2c_ccs811)
@@ -33,14 +36,17 @@ def getData():
         temperature = bme280.temperature
         humidity = bme280.humidity
         pressure = bme280.pressure
+    except:
+        temperature = 0
+        humidity = 0
+        pressure = 0
+
+    try:
         tvoc = ccs811.tvoc
         co2 = ccs811.eco2
     except:
-        temperature = -1
-        humidity = -1
-        pressure = -1
-        tvoc = -1
-        co2 = -1
+        tvoc = 0
+        co2 = 0
 
     data = {
 		'temperature' : float("{:.2f}".format(temperature)),

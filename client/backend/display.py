@@ -1,7 +1,10 @@
 # display
 from PIL import Image, ImageDraw, ImageFont
 from time import sleep
-#import adafruit_ssd1306
+import adafruit_ssd1306
+import busio
+import board
+import digitalio
 
 WIDTH = 128
 HEIGHT = 64
@@ -11,17 +14,19 @@ x_space = 72
 y_start = 14
 y_space = 10
 
+font = ImageFont.load_default()
+image = Image.new('1',(128,64))
+draw = ImageDraw.Draw(image)
+oled = None
+
 def initialize():
+    global oled
     try:
         spi = busio.SPI(board.SCK, MOSI=board.MOSI)
         reset_pin = digitalio.DigitalInOut(board.D19)
         cs_pin = digitalio.DigitalInOut(board.D8)
         dc_pin = digitalio.DigitalInOut(board.D13)
         oled = adafruit_ssd1306.SSD1306_SPI(WIDTH, HEIGHT, spi, dc_pin, reset_pin, cs_pin)
-
-        font = ImageFont.load_default()
-        image = Image.new('1',(128,64))
-        draw = ImageDraw.Draw(image)
 
         displayCleared = False
 
@@ -35,7 +40,7 @@ def initialize():
         print("Failed to initialize display:", e)
         return False
 
-def updateDisplay(hostname, data):
+def update(hostname, data):
     # cleanup display
 	draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0)
     
