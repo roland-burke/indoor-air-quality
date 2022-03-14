@@ -52,11 +52,11 @@ export class ResponseData {
 			data.meta.hostname,
 			data.meta.uptime,
 			data.meta.room,
-			data.sensors.temperature[0],
-			data.sensors.humidity[0],
-			data.sensors.pressure[0],
-			data.sensors.co2[0],
-			data.sensors.tvoc[0],
+			data.sensors.temperature,
+			data.sensors.humidity,
+			data.sensors.pressure,
+			data.sensors.co2,
+			data.sensors.tvoc,
 			data.controls.alarmEnabled,
 			data.controls.displayEnabled
 		)
@@ -97,8 +97,8 @@ export default defineComponent({
 		},
 
 		getUrl: function() {
-			// var url = document.location.protocol + '//' + document.location.host
-			var url = 'http://localhost:5000'
+			var url = document.location.protocol + '//' + document.location.host
+			// var url = 'http://localhost:5000'
 			return url
 		}
 	}

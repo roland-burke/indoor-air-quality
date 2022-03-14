@@ -1,10 +1,6 @@
 # general
 from cProfile import run
 from concurrent.futures import thread
-from curses.ascii import NUL
-from math import fabs
-from ntpath import join
-from signal import alarm
 from time import sleep
 import json
 from threading import Thread
@@ -15,7 +11,7 @@ import random
 
 import sensors
 import display
-from model import DataModel
+from models import DataModel, SensorDataModel
 
 # webserver
 from flask import Flask, send_from_directory
@@ -44,16 +40,12 @@ def initializeLDR():
         print("Failed to initialize LDR:", e)
 
 def display_thread():
+    global displayEnabled
     while True:
-        if GPIO.input(LDR_PIN) == 1:
+        if GPIO.input(LDR_PIN) == 1 and displayEnabled:
             display.update(socket.gethostname(), sensors.getData()) # Bright
-            displayCleared = False
         else:
-           if not displayCleared:
-                draw.rectangle((0, 0, WIDTH, HEIGHT), outline = 0, fill=0) # Dark
-                oled.image(image)
-                oled.show()
-                displayCleared = True
+            display.clear()
         sleep(1)
 
 
@@ -95,11 +87,9 @@ def getUptime():
 def getData():
     global alarmEnabled
     global displayEnabled
-    temperature = sensors.getData().get('temperature')
-    humidity = sensors.getData().get('humidity')
-    pressure = sensors.getData().get('pressure')
-    data = DataModel(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=-1, tvoc=-1, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
-    return getMockData()
+
+    data = DataModel(host=hostname, room=room, uptime=getUptime(), sensors=sensors.getData(), alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    return data
 
 def getMockData():
     temperature = float("{:.2f}".format(random.uniform(21.0, 21.5))),
@@ -107,8 +97,9 @@ def getMockData():
     pressure = float("{:.2f}".format(random.uniform(972, 974))),
     co2 = random.randint(800,820),
     tvoc = random.randint(120,130),
-    data = DataModel(host=hostname, room=room, uptime=getUptime(), temp=temperature, hum=humidity, pressure=pressure, co2=co2, tvoc=tvoc, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
-    return data.toJson()
+    sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc)
+    data = DataModel(host=hostname, room=room, uptime=getUptime(), sensors=sensorData, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    return data
 
 def setup():
     global displayWorking
@@ -136,7 +127,7 @@ def welcome():
 
 @app.route('/api/data', methods = ['GET'])
 def data():
-    return getResponse(json.dumps(getData()), 200)
+    return getResponse(json.dumps(getData().toJson()), 200)
 
 @app.route('/api/controls/alarm/<value>', methods = ['POST'])
 def controlAlarm(value):

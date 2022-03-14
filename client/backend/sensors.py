@@ -4,6 +4,7 @@ import adafruit_ccs811
 import busio
 
 import board
+from models import SensorDataModel
 
 bme280 = None
 ccs811 = None
@@ -48,11 +49,4 @@ def getData():
         tvoc = 0
         co2 = 0
 
-    data = {
-		'temperature' : float("{:.2f}".format(temperature)),
-		'humidity': float("{:.2f}".format(humidity)),
-		'pressure': float("{:.2f}".format(pressure)),
-        'tvoc': tvoc,
-        'co2': co2
-	}
-    return data
+    return SensorDataModel(temperature, humidity, pressure, co2, tvoc)
