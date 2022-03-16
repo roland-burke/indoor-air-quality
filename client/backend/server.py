@@ -21,17 +21,32 @@ from flask import Response
 # hardware
 import RPi.GPIO as GPIO
 
-hostname = socket.gethostname()
-room = "rolands-zimmer"
+# Constants
+BUZZER_DURATION = 1 # seconds
+BUZZER_PAUSE = 0.5 # seconds
+HIGH = 1 # bright
+LOW = 0
+
+# input 1 means Bright
+LDR_PIN = 4 # GPIO 4, pin num: 7
+BUZZER_PIN = 5 # GPIO 5, pin num: 29
+
+# meta information
+ROOM_IDENTIFIER = "rolands-zimmer"
 xDistance = 0 # distance to next vertical wall
 yDistance = 0 # height, distance from ground
+hostname = socket.gethostname()
+
 displayWorking = False
 BME280Working = False
 CCS811Working = False
 
-LDR_PIN = 4 # input 1 means Bright
+alarmEnabled = False
+displayEnabled = True
 
-# initialize LDR = Light Dependendent Resistor
+app = Flask(__name__, static_url_path='', static_folder='static')
+
+# LDR = Light Dependendent Resistor
 def initializeLDR():
     try:
         GPIO.setmode(GPIO.BCM)
@@ -42,23 +57,11 @@ def initializeLDR():
 def display_thread():
     global displayEnabled
     while True:
-        if GPIO.input(LDR_PIN) == 1 and displayEnabled:
-            display.update(socket.gethostname(), sensors.getData()) # Bright
+        if GPIO.input(LDR_PIN) == HIGH and displayEnabled:
+            display.update(socket.gethostname(), sensors.getData())
         else:
             display.clear()
         sleep(1)
-
-
-displayThread = Thread(target = display_thread)
-
-# initialize webserver
-
-app = Flask(__name__, static_url_path='', static_folder='static')
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-alarmEnabled = False
-displayEnabled = True
 
 def saveControls():
 	controlsFile = open('controls.json', 'w+')
@@ -88,7 +91,7 @@ def getData():
     global alarmEnabled
     global displayEnabled
 
-    data = DataModel(host=hostname, room=room, uptime=getUptime(), sensors=sensors.getData(), alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensors.getData(), alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
     return data
 
 def getMockData():
@@ -98,8 +101,21 @@ def getMockData():
     co2 = random.randint(800,820),
     tvoc = random.randint(120,130),
     sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc)
-    data = DataModel(host=hostname, room=room, uptime=getUptime(), sensors=sensorData, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensorData, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
     return data
+
+def alarm():
+    GPIO.setup(BUZZER_PIN,GPIO.OUT)
+
+    for i in range(3):
+        GPIO.output(BUZZER_PIN, HIGH)
+        time.sleep(BUZZER_DURATION)
+
+        GPIO.output(BUZZER_PIN, LOW)
+        time.sleep(BUZZER_PAUSE)
+
+    GPIO.output(BUZZER_PIN, LOW)
+
 
 def setup():
     global displayWorking
@@ -114,8 +130,9 @@ def setup():
 
     loadControls()
     saveControls()
-    print("Alarm:", alarmEnabled)
-    print("Display:", displayEnabled)
+
+    alarm()
+
 
 # data must be a string
 def getResponse(data, statusCode):
@@ -139,15 +156,8 @@ def controlAlarm(value):
 		alarmEnabled = False
 		saveControls()
 	else:
-		data = {
-			'status' : 'Error',
-    	}
-		return data
-
-	data = {
-		'status' : 'success',
-    }
-	return data
+		return getResponse(json.dumps({'status' : 'error'}), 400)
+	return getResponse(json.dumps({'status' : 'success'}), 200)
 
 @app.route('/api/controls/display/<value>', methods = ['POST'])
 def controlDisplay(value):
@@ -159,20 +169,16 @@ def controlDisplay(value):
 		displayEnabled = False
 		saveControls()
 	else:
-		data = {
-			'status' : 'Error',
-    	}
-		return data
-
-	data = {
-		'status' : 'success',
-    }
-	return data
+		return getResponse(json.dumps({'status' : 'error'}), 400)
+	return getResponse(json.dumps({'status' : 'success'}), 200)
 
 
 if __name__ == '__main__':
     setup()
+
+    displayThread = Thread(target = display_thread)
     myThread = displayThread.start()
     thread.daemon=True
 
+    app.config['CORS_HEADERS'] = 'Content-Type'
     app.run(debug=False, port=5000, host='0.0.0.0')
