@@ -23,8 +23,7 @@ npm run lint
 
 The used protocol for communicating with the display is SPI.
 
-	Display - RaspberryPi
-
+	Display - RaspberryPi (SPI)
 	GND  -->  GND
 	VDD  -->  3v3
 	SCK  -->  SPI_CLK (GPIO 11)
@@ -37,4 +36,17 @@ The used protocol for communicating with the display is SPI.
 	A    -->  3v3
 	B    -->  GPIO 4
 	B    -->  GND (with 15.1K resistance)
+	
+	Active Buzzer - RaspberryPi
+	+    -->  GPIO 5
+	GND  -->  GND
+	
+	CCS811 - RapberryPi (I²C)
+	VCC  -->  3v3
+	GND  -->  GND
+	SCL  -->  SCL (GPIO 03)
+	SDA  -->  SDA (GPIO 02)
+	WAK  -->  GND
+	RST  -->  3v3
+	ADD  -->  GND or 3v3
 	
