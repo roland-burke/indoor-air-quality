@@ -18,7 +18,7 @@
 					<div class="flex justify-between items-center mb-3">
 						<div class="flex flex-col">
 							<h2 class="ml-2 text-xl text-left font-bold">
-								Enable Alarm
+								Alarm
 							</h2>
 							<h3 class="ml-2 text-left">
 								Give an alarm when the air quality is too bad
@@ -64,7 +64,7 @@
 					>
 						<div class="flex flex-col">
 							<h2 class="ml-2 text-xl text-left font-bold">
-								Enable Smart Alarm
+								Smart Alarm
 							</h2>
 							<h3 class="ml-2 text-left">
 								Alarm will automatically turn off during
@@ -113,7 +113,7 @@
 						<div class="flex justify-between items-center mt-3">
 							<div class="flex flex-col">
 								<h2 class="ml-2 text-xl text-left font-bold">
-									Enable Display
+									Display
 								</h2>
 								<h3 class="ml-2 text-left">
 									Turn on the builtin display and show
@@ -164,7 +164,7 @@
 						<div class="flex justify-between items-center mt-3">
 							<div class="flex flex-col">
 								<h2 class="ml-2 text-xl text-left font-bold">
-									Enable Smart Display
+									Smart Display
 								</h2>
 								<h3 class="ml-2 text-left">
 									The Display will automatically turn off
