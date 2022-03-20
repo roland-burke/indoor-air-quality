@@ -6,20 +6,22 @@ import json
 from threading import Thread
 import socket
 import time
+from typing import final
 import psutil # for uptime
 import random
 
 import sensors
 import display
-from models import DataModel, SensorDataModel
+from models import ControlsModel, DataModel, SensorDataModel
 
 # webserver
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask import Response
+from flask import request as req
 
 # hardware
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 # Constants
 BUZZER_DURATION = 1 # seconds
@@ -41,8 +43,7 @@ displayWorking = False
 BME280Working = False
 CCS811Working = False
 
-alarmEnabled = False
-displayEnabled = True
+controls = None
 
 app = Flask(__name__, static_url_path='', static_folder='static')
 
@@ -63,35 +64,37 @@ def display_thread():
             display.clear()
         sleep(1)
 
-def saveControls():
-	controlsFile = open('controls.json', 'w+')
-	controlsFile.seek(0, 0)
-	controlsFile.write(json.dumps({"alarmEnabled": alarmEnabled, "displayEnabled": displayEnabled}, indent = 4))
-	controlsFile.close()
+def saveControls(controls):
+    try:
+        controlsFile = open('controls.json', 'w+')
+        controlsFile.seek(0, 0)
+        controlsFile.write(json.dumps(controls.toJson(), indent = 4))
+    except Exception as e:
+        print("Failed to save controls:", e)
+    finally:
+	    controlsFile.close()
+
  
 def loadControls():
-	global alarmEnabled
-	global displayEnabled
-	controlsFile = open('controls.json', 'r+')
-	controlsFile.seek(0, 0)
-	try:
-		controls = json.load(controlsFile)
-		alarmEnabled = controls['alarmEnabled']
-		displayEnabled = controls['displayEnabled']
-	except json.decoder.JSONDecodeError:
-		alarmEnabled = False
-		displayEnabled = True
-	controlsFile.close()
+    global controls
+
+    try:
+        controlsFile = open('controls.json', 'r+')
+        controlsFile.seek(0, 0)
+        loaded = json.load(controlsFile)
+        controls = ControlsModel.of(loaded)
+    except Exception as e:
+        controls = ControlsModel.initial()
+        print("Failed to load controls:", e)
+    finally:
+        controlsFile.close()
 
 def getUptime():
     uptime = time.time() - psutil.boot_time()
     return time.strftime('%H:%M:%S', time.gmtime(uptime))
 
 def getData():
-    global alarmEnabled
-    global displayEnabled
-
-    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensors.getData(), alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensors.getData(), controls=controls)
     return data
 
 def getMockData():
@@ -101,37 +104,34 @@ def getMockData():
     co2 = random.randint(800,820),
     tvoc = random.randint(120,130),
     sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc)
-    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensorData, alarmEnabled=alarmEnabled, displayEnabled=displayEnabled)
+    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensorData, controls=controls)
     return data
 
 def alarm():
-    GPIO.setup(BUZZER_PIN,GPIO.OUT)
+    print("ALARM ALARM")
+    #GPIO.setup(BUZZER_PIN,GPIO.OUT)
 
-    for i in range(3):
-        GPIO.output(BUZZER_PIN, HIGH)
-        time.sleep(BUZZER_DURATION)
+    #for i in range(3):
+    #    GPIO.output(BUZZER_PIN, HIGH)
+    #    time.sleep(BUZZER_DURATION)
 
-        GPIO.output(BUZZER_PIN, LOW)
-        time.sleep(BUZZER_PAUSE)
+    #    GPIO.output(BUZZER_PIN, LOW)
+    #    time.sleep(BUZZER_PAUSE)
 
-    GPIO.output(BUZZER_PIN, LOW)
+    #GPIO.output(BUZZER_PIN, LOW)
 
 
 def setup():
     global displayWorking
     global BME280Working
     global CCS811Working
+    loadControls()
 
     displayWorking = display.initialize()
     initializeLDR()
 
     BME280Working = sensors.initializeBME280()
     CCS811Working = sensors.initializeCCS811()
-
-    loadControls()
-    saveControls()
-
-    alarm()
 
 
 # data must be a string
@@ -146,32 +146,16 @@ def welcome():
 def data():
     return getResponse(json.dumps(getData().toJson()), 200)
 
-@app.route('/api/controls/alarm/<value>', methods = ['POST'])
-def controlAlarm(value):
-	global alarmEnabled
-	if value.lower() == 'true':
-		alarmEnabled = True
-		saveControls()
-	elif value.lower() == 'false':
-		alarmEnabled = False
-		saveControls()
-	else:
-		return getResponse(json.dumps({'status' : 'error'}), 400)
-	return getResponse(json.dumps({'status' : 'success'}), 200)
-
-@app.route('/api/controls/display/<value>', methods = ['POST'])
-def controlDisplay(value):
-	global displayEnabled
-	if value.lower() == 'true':
-		displayEnabled = True
-		saveControls()
-	elif value.lower() == 'false':
-		displayEnabled = False
-		saveControls()
-	else:
-		return getResponse(json.dumps({'status' : 'error'}), 400)
-	return getResponse(json.dumps({'status' : 'success'}), 200)
-
+@app.route('/api/controls', methods = ['POST'])
+def setControls():
+    global controls
+    print(req.json)
+    try:
+        controls = ControlsModel.of(req.json)
+        saveControls(controls)
+    except:
+        return getResponse(json.dumps({'status' : 'error'}), 500)
+    return getResponse(json.dumps({'status' : 'success'}), 200)
 
 if __name__ == '__main__':
     setup()
@@ -179,6 +163,7 @@ if __name__ == '__main__':
     displayThread = Thread(target = display_thread)
     myThread = displayThread.start()
     thread.daemon=True
-
+    
+    cors = CORS(app)
     app.config['CORS_HEADERS'] = 'Content-Type'
     app.run(debug=False, port=5000, host='0.0.0.0')

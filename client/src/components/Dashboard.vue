@@ -13,7 +13,7 @@
 				border-blue-400
 			"
 		>
-			<legend class="text-2xl px-2 text-left">Sensor Overview</legend>
+			<legend class="text-2xl px-2 text-left">Overview</legend>
 			<div class="divide-y divide-solid">
 				<div class="mb-2">
 					<div class="flex items-center">

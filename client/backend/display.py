@@ -1,10 +1,10 @@
 # display
 from PIL import Image, ImageDraw, ImageFont
 from time import sleep
-import adafruit_ssd1306
-import busio
-import board
-import digitalio
+#import adafruit_ssd1306
+#import busio
+#import board
+#import digitalio
 
 DISPLAY_WIDTH = 128
 DISPLAY_HEIGHT = 64

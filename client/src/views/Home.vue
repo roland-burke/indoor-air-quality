@@ -97,8 +97,8 @@ export default defineComponent({
 		},
 
 		getUrl: function() {
-			var url = document.location.protocol + '//' + document.location.host
-			// var url = 'http://localhost:5000'
+			// var url = document.location.protocol + '//' + document.location.host
+			var url = 'http://localhost:5000'
 			return url
 		}
 	}

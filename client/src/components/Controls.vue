@@ -245,41 +245,46 @@ export default defineComponent({
 		}
 	},
 	methods: {
+		saveControls: function() {
+			var data = {
+				displayEnabled: this.displayChecked,
+				alarmEnabled: this.alarmChecked,
+				smartDisplayEnabled: this.smartDisplayChecked,
+				smartAlarmEnabled: this.smartAlarmChecked
+
+			}
+			var completeUrl = this.hostUrl + '/api/controls'
+			return axios.post(completeUrl, data)
+		},
+
 		toggleAlarm: function() {
 			this.alarmChecked = !this.alarmChecked
 			this.smartAlarmEnabled = this.alarmChecked && true
 
-			var completeUrl = this.hostUrl + '/api/controls/alarm/'
-
-			axios.post(completeUrl + this.alarmChecked).then((response: any) => {
-				/*
-				if (response.data.status !== 'success') {
-					this.alarmChecked = this.smartAlarmEnabled = false
-				}
-				*/
+			this.saveControls().then((response: any) => {
 				console.log(response)
 			})
 		},
 		toggleDisplay: function() {
 			this.displayChecked = !this.displayChecked
 			this.smartDisplayEnabled = this.displayChecked && true
-			var completeUrl = this.hostUrl + '/api/controls/display/'
-			axios.post(completeUrl + this.displayChecked).then((response: any) => {
-				/*
-				if (response.data.status !== 'success') {
-					this.displayChecked = this.smartDisplayEnabled = false
-				}
-				*/
+
+			this.saveControls().then((response: any) => {
 				console.log(response)
 			})
 		},
 		toggleSmartAlarm: function() {
 			this.smartAlarmChecked = !this.smartAlarmChecked
-			// todo
+
+			this.saveControls().then((response: any) => {
+				console.log(response)
+			})
 		},
 		toggleSmartDisplay: function() {
 			this.smartDisplayChecked = !this.smartDisplayChecked
-			// todo
+			this.saveControls().then((response: any) => {
+				console.log(response)
+			})
 		}
 	}
 })

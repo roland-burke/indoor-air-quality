@@ -1,3 +1,39 @@
+from re import X
+
+
+class ControlsModel:
+    alarmEnabled = False
+    displayEnabled = True
+    smartAlarmEnabled = False
+    smartDisplayEnabled = False
+
+    def __init__(self, alarmEnabled, displayEnabled, smartAlarmEnabled, smartDisplayEnabled):
+        self.alarmEnabled = alarmEnabled
+        self.displayEnabled = displayEnabled
+        self.smartAlarmEnabled = smartAlarmEnabled
+        self.smartDisplayEnabled = smartDisplayEnabled
+
+    def toJson(self):
+        return {
+            'alarmEnabled': self.alarmEnabled,
+            'displayEnabled': self.displayEnabled,
+            'smartAlarmEnabled': self.smartAlarmEnabled,
+            'smartDisplayEnabled': self.smartDisplayEnabled
+        }
+
+    @staticmethod
+    def of(controls):
+        try:
+            return ControlsModel(controls['alarmEnabled'], controls['displayEnabled'], controls['smartAlarmEnabled'], controls['smartDisplayEnabled'])
+        except Exception as e:
+            print("Error parsing controls:", e)
+            return ControlsModel(False, True, False, False)
+
+    @staticmethod
+    def initial():
+        return ControlsModel(False, True, False, False)
+
+
 class SensorDataModel:
     # sensor data
     temperature = 0
@@ -35,15 +71,13 @@ class DataModel:
     alarmEnabled = False
     displayEnabled = False
 
-    def __init__(self, host, room, uptime, sensors, alarmEnabled, displayEnabled):
+    def __init__(self, host, room, uptime, sensors, controls):
         self.hostname = host
         self.room = room
         self.uptime = uptime
 
         self.sensors = sensors
-
-        self.alarmEnabled = alarmEnabled
-        self.displayEnabled = displayEnabled
+        self.controls = controls
 
     def toJson(self):
         return {
@@ -52,9 +86,6 @@ class DataModel:
             'uptime': self.uptime,
             'room': self.room,
             },
-        'controls': {
-            'alarmEnabled': self.alarmEnabled,
-            'displayEnabled': self.displayEnabled
-            },
+        'controls': self.controls.toJson(),
         'sensors': self.sensors.toJson()
         }
