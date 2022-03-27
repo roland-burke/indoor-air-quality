@@ -111,7 +111,9 @@
 				</div>
 				<div>
 					<div>
-						<div class="flex justify-between items-center mt-3">
+						<div
+							class="flex justify-between items-center mt-3 mb-3"
+						>
 							<div class="flex flex-col">
 								<h2 class="ml-2 text-xl text-left font-bold">
 									Display
@@ -162,7 +164,9 @@
 						v-if="smartDisplayEnabled"
 						class="ease-in-out duration-1000"
 					>
-						<div class="flex justify-between items-center mt-3">
+						<div
+							class="flex justify-between items-center mt-3 mb-3"
+						>
 							<div class="flex flex-col">
 								<h2 class="ml-2 text-xl text-left font-bold">
 									Smart Display
@@ -214,7 +218,20 @@
 					</div>
 				</div>
 				<div>
-					<button type="button">Test Alarm</button>
+					<div class="mt-4">
+						<button
+                        v-on:click="testAlarm()"
+							class="
+								hover:bg-green-400
+								rounded-lg
+								bg-transparent
+								p-2
+								border-2
+							"
+						>
+							Test Alarm
+						</button>
+					</div>
 				</div>
 			</div>
 		</fieldset>
@@ -265,6 +282,11 @@ export default defineComponent({
 			}
 			var completeUrl = this.hostUrl + '/api/controls'
 			return axios.post(completeUrl, data)
+		},
+
+		testAlarm: function() {
+			var completeUrl = this.hostUrl + '/api/alarm/test'
+			return axios.post(completeUrl, {})
 		},
 
 		toggleAlarm: function() {

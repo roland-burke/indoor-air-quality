@@ -35,10 +35,10 @@
 								<p>{{ this.responseData.uptime }}</p>
 							</div>
 						</div>
-                        <div class="flex flex-col items-end justify-end">
-                            <div class="flex text-base">192.167.98.3</div>
-                            <div class="flex text-sm">E4-B9-7A-DE-00-94</div>
-                        </div>
+						<div class="flex flex-col items-end justify-end">
+							<div class="flex text-base">{{this.responseData.ipAddr}}</div>
+							<div class="flex text-sm">{{this.responseData.macAddr}}</div>
+						</div>
 					</div>
 				</div>
 
@@ -62,34 +62,31 @@
 							<InfoLine
 								:label="'Temperature:'"
 								:value="
-									this.responseData.temperature.toFixed(1) +
+									this.sensorData.temperature.toFixed(1) +
 									' °C'
 								"
 							></InfoLine>
 							<InfoLine
 								:label="'Humidity:'"
 								:value="
-									this.responseData.humidity.toFixed(0) + ' %'
+									this.sensorData.humidity.toFixed(0) + ' %'
 								"
 							></InfoLine>
 							<InfoLine
 								:label="'Pressure:'"
 								:value="
-									this.responseData.pressure.toFixed(0) +
-									' hPa'
+									this.sensorData.pressure.toFixed(0) + ' hPa'
 								"
 							></InfoLine>
 							<InfoLine
 								:label="'TVOC:'"
 								:value="
-									this.responseData.tvoc.toFixed(0) + ' ppb'
+									this.sensorData.tvoc.toFixed(0) + ' ppb'
 								"
 							></InfoLine>
 							<InfoLine
 								:label="'CO2:'"
-								:value="
-									this.responseData.co2.toFixed(0) + ' ppm'
-								"
+								:value="this.sensorData.co2.toFixed(0) + ' ppm'"
 							></InfoLine>
 						</div>
 					</div>
@@ -101,7 +98,7 @@
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
-import { ResponseData } from '@/views/Home.vue'
+import { ResponseData, SensorData } from '@/views/Home.vue'
 import InfoLine from './InfoLine.vue'
 import StatusLine from './StatusLine.vue'
 
@@ -109,7 +106,8 @@ export default defineComponent({
 	components: { InfoLine, StatusLine },
 	name: 'Dashboard',
 	props: {
-		responseData: ResponseData
+		responseData: ResponseData,
+		sensorData: SensorData
 	}
 })
 </script>

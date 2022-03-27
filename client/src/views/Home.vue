@@ -1,8 +1,11 @@
 <template>
 	<div class="home">
-		<Dashboard :responseData="this.responseData" />
-		<Controls :responseData="this.responseData" :hostUrl="this.getUrl()"/>
-	</div>
+		<Dashboard
+			:responseData="this.responseData"
+			:sensorData="this.sensorData"
+		/>
+		<Controls :responseData="this.responseData" :hostUrl="this.getUrl()" />
+    </div>
 </template>
 
 <script lang="ts">
@@ -11,15 +14,50 @@ import Dashboard from '@/components/Dashboard.vue'
 import Controls from '@/components/Controls.vue'
 import axios from 'axios'
 
-export class ResponseData {
-	hostname: string
-	uptime: string
-	room: string
+export class SensorData {
 	temperature: number
 	humidity: number
 	pressure: number
 	co2: number
 	tvoc: number
+
+	constructor(
+		temperature: number,
+		humidity: number,
+		pressure: number,
+		co2: number,
+		tvoc: number
+
+	) {
+		this.temperature = temperature
+		this.humidity = humidity
+		this.pressure = pressure
+		this.co2 = co2
+		this.tvoc = tvoc
+	}
+
+	static of(data: any): SensorData {
+		return new SensorData(
+			data.temperature,
+			data.humidity,
+			data.pressure,
+			data.co2,
+			data.tvoc
+		)
+	}
+
+	static default() {
+		return new SensorData(0, 0, 0, 0, 0)
+	}
+}
+
+export class ResponseData {
+	hostname: string
+	uptime: string
+	room: string
+    ipAddr: string
+    macAddr: string
+
 	alarmEnabled: boolean
 	displayEnabled: boolean
 
@@ -27,22 +65,16 @@ export class ResponseData {
 		hostname: string,
 		uptime: string,
 		room: string,
-		temperature: number,
-		humidity: number,
-		pressure: number,
-		co2: number,
-		tvoc: number,
+		ipAddr: string,
+		macAddr: string,
 		alarmEnabled: boolean,
 		displayEnabled: boolean
 	) {
 		this.hostname = hostname
 		this.uptime = uptime
 		this.room = room
-		this.temperature = temperature
-		this.humidity = humidity
-		this.pressure = pressure
-		this.co2 = co2
-		this.tvoc = tvoc
+		this.ipAddr = ipAddr
+		this.macAddr = macAddr
 		this.alarmEnabled = alarmEnabled
 		this.displayEnabled = displayEnabled
 	}
@@ -52,18 +84,15 @@ export class ResponseData {
 			data.meta.hostname,
 			data.meta.uptime,
 			data.meta.room,
-			data.sensors.temperature,
-			data.sensors.humidity,
-			data.sensors.pressure,
-			data.sensors.co2,
-			data.sensors.tvoc,
+			data.meta.ipAddr,
+			data.meta.macAddr,
 			data.controls.alarmEnabled,
 			data.controls.displayEnabled
 		)
 	}
 
 	static default() {
-		return new ResponseData('n.A.', 'n.A.', 'n.A.', 0, 0, 0, 0, 0, false, false)
+		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false)
 	}
 }
 
@@ -75,7 +104,8 @@ export default defineComponent({
 	},
 	data: function() {
 		return {
-			responseData: ResponseData.default()
+			responseData: ResponseData.default(),
+			sensorData: SensorData.default()
 		}
 	},
 	mounted: function() {
@@ -93,6 +123,7 @@ export default defineComponent({
 			axios.get(this.getUrl() + '/api/data').then((response: any) => {
 				console.log(response)
 				this.responseData = ResponseData.of(response.data)
+				this.sensorData = SensorData.of(response.data.sensors)
 			})
 		},
 

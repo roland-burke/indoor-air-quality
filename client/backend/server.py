@@ -1,10 +1,8 @@
 # general
-from cProfile import run
 from concurrent.futures import thread
 from time import sleep
 import json
 from threading import Thread
-import socket
 import time
 from typing import final
 import psutil # for uptime
@@ -19,6 +17,10 @@ from flask import Flask, send_from_directory
 from flask_cors import CORS
 from flask import Response
 from flask import request as req
+
+import fcntl
+import socket
+import struct
 
 # hardware
 #import RPi.GPIO as GPIO
@@ -38,6 +40,8 @@ ROOM_IDENTIFIER = "rolands-zimmer"
 xDistance = 0 # distance to next vertical wall
 yDistance = 0 # height, distance from ground
 hostname = socket.gethostname()
+
+alarmOn = False
 
 displayWorking = False
 BME280Working = False
@@ -93,21 +97,30 @@ def getUptime():
     uptime = time.time() - psutil.boot_time()
     return time.strftime('%H:%M:%S', time.gmtime(uptime))
 
+def getHwAddr(ifname):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
+    except:
+        info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes("wlp0s20f3", 'utf-8')[:15]))
+    return ':'.join('%02x' % b for b in info[18:24])
+
 def getData():
-    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensors.getData(), controls=controls)
-    return data
+    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
+    return getMockData()
 
 def getMockData():
-    temperature = float("{:.2f}".format(random.uniform(21.0, 21.5))),
-    humidity = float("{:.2f}".format(random.uniform(40.0, 42.0))),
-    pressure = float("{:.2f}".format(random.uniform(972, 974))),
-    co2 = random.randint(800,820),
-    tvoc = random.randint(120,130),
+    temperature = random.uniform(21.0, 21.5)
+    humidity = random.uniform(40.0, 42.0)
+    pressure = random.uniform(972, 974)
+    co2 = random.randint(800,820)
+    tvoc = random.randint(120,130)
     sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc)
-    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), sensors=sensorData, controls=controls)
+    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensorData, controls=controls)
     return data
 
 def alarm():
+    alarmOn = True
     print("ALARM ALARM")
     #GPIO.setup(BUZZER_PIN,GPIO.OUT)
 
@@ -119,6 +132,7 @@ def alarm():
     #    time.sleep(BUZZER_PAUSE)
 
     #GPIO.output(BUZZER_PIN, LOW)
+    alarmOn = False
 
 
 def setup():
@@ -145,6 +159,14 @@ def welcome():
 @app.route('/api/data', methods = ['GET'])
 def data():
     return getResponse(json.dumps(getData().toJson()), 200)
+
+@app.route('/api/alarm/test', methods = ['POST'])
+def testAlarm():
+    if(not alarmOn):
+        alarm()
+        return getResponse(json.dumps({'status': 'success'}), 200)
+    else:
+        return getResponse(json.dumps({'status': 'alarm still in progress'}), 423)
 
 @app.route('/api/controls', methods = ['POST'])
 def setControls():
