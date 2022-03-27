@@ -3,6 +3,7 @@
 		<fieldset
 			class="
 				mx-5
+				mb-5
 				p-4
 				w-5/6
 				max-w-2xl
@@ -212,6 +213,9 @@
 						</div>
 					</div>
 				</div>
+				<div>
+					<button type="button">Test Alarm</button>
+				</div>
 			</div>
 		</fieldset>
 	</div>
@@ -242,6 +246,12 @@ export default defineComponent({
 		responseData: function(val) {
 			this.alarmChecked = val.alarmEnabled
 			this.displayChecked = val.displayEnabled
+			if (this.alarmChecked) {
+				this.smartAlarmEnabled = true
+			}
+			if (this.displayChecked) {
+				this.smartDisplayEnabled = true
+			}
 		}
 	},
 	methods: {

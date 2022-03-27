@@ -7,6 +7,8 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Avenir:100,300,400,500,700,900');
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

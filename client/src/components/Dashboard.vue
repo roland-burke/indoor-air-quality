@@ -16,27 +16,48 @@
 			<legend class="text-2xl px-2 text-left">Overview</legend>
 			<div class="divide-y divide-solid">
 				<div class="mb-2">
-					<div class="flex items-center">
-						<h1 class="text-xl font-bold mr-2">Device Name:</h1>
-						<p>{{ this.responseData.hostname }}</p>
-					</div>
-					<div class="flex items-center">
-						<h1 class="text-base font-bold mr-2">Room:</h1>
-						<p>{{ this.responseData.room }}</p>
-					</div>
-					<div class="flex items-center">
-						<h1 class="text-base font-bold mr-2">Uptime:</h1>
-						<p>{{ this.responseData.uptime }}</p>
+					<div class="flex flex-row justify-between">
+						<div>
+							<div class="flex items-center">
+								<h1 class="text-xl font-bold mr-2">
+									Device Name:
+								</h1>
+								<p>{{ this.responseData.hostname }}</p>
+							</div>
+							<div class="flex items-center">
+								<h1 class="text-base font-bold mr-2">Room:</h1>
+								<p>{{ this.responseData.room }}</p>
+							</div>
+							<div class="flex items-center">
+								<h1 class="text-base font-bold mr-2">
+									Uptime:
+								</h1>
+								<p>{{ this.responseData.uptime }}</p>
+							</div>
+						</div>
+                        <div class="flex flex-col items-end justify-end">
+                            <div class="flex text-base">192.167.98.3</div>
+                            <div class="flex text-sm">E4-B9-7A-DE-00-94</div>
+                        </div>
 					</div>
 				</div>
 
 				<div>
 					<div class="flex justify-evenly items-center mt-2">
-                        <div>
-                            <StatusLine :label="'BME280:'" :value="false"></StatusLine>
-                            <StatusLine :label="'CCS811:'" :value="true"></StatusLine>
-                            <StatusLine :label="'Display:'" :value="false"></StatusLine>
-                        </div>
+						<div>
+							<StatusLine
+								:label="'BME280:'"
+								:value="false"
+							></StatusLine>
+							<StatusLine
+								:label="'CCS811:'"
+								:value="true"
+							></StatusLine>
+							<StatusLine
+								:label="'Display:'"
+								:value="false"
+							></StatusLine>
+						</div>
 						<div>
 							<InfoLine
 								:label="'Temperature:'"
@@ -45,31 +66,29 @@
 									' °C'
 								"
 							></InfoLine>
-                            <InfoLine
+							<InfoLine
 								:label="'Humidity:'"
 								:value="
-									this.responseData.humidity.toFixed(0) +
-									' %'
+									this.responseData.humidity.toFixed(0) + ' %'
 								"
 							></InfoLine>
-                            <InfoLine
+							<InfoLine
 								:label="'Pressure:'"
 								:value="
 									this.responseData.pressure.toFixed(0) +
 									' hPa'
 								"
 							></InfoLine>
-                            <InfoLine
+							<InfoLine
 								:label="'TVOC:'"
 								:value="
-									this.responseData.tvoc.toFixed(0)
+									this.responseData.tvoc.toFixed(0) + ' ppb'
 								"
 							></InfoLine>
-                                <InfoLine
+							<InfoLine
 								:label="'CO2:'"
 								:value="
-									this.responseData.co2.toFixed(0) +
-									' ppm'
+									this.responseData.co2.toFixed(0) + ' ppm'
 								"
 							></InfoLine>
 						</div>
