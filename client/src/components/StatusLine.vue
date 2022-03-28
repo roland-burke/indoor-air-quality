@@ -1,10 +1,7 @@
 <template>
 	<div class="flex justify-evenly items-center">
 		<span class="text-left text-lg font-bold w-20">{{ label }}</span>
-		<span
-			v-bind:class="value ? 'bg-green-600' : 'bg-red-600'"
-			class="w-5 h-5 m-1 rounded-full border-2 border-black"
-		></span>
+		<span v-bind:class="value ? 'bg-green-600' : 'bg-red-600'" class="w-5 h-5 m-1 rounded-full border-2 border-black"></span>
 	</div>
 </template>
 

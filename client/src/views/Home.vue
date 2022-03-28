@@ -1,11 +1,8 @@
 <template>
 	<div class="home">
-		<Dashboard
-			:responseData="this.responseData"
-			:sensorData="this.sensorData"
-		/>
+		<Dashboard :responseData="this.responseData" :sensorData="this.sensorData" />
 		<Controls :responseData="this.responseData" :hostUrl="this.getUrl()" />
-    </div>
+	</div>
 </template>
 
 <script lang="ts">
@@ -55,11 +52,13 @@ export class ResponseData {
 	hostname: string
 	uptime: string
 	room: string
-    ipAddr: string
-    macAddr: string
+	ipAddr: string
+	macAddr: string
 
 	alarmEnabled: boolean
 	displayEnabled: boolean
+	smartAlarmEnabled: boolean
+	smartDisplayEnabled: boolean
 
 	constructor(
 		hostname: string,
@@ -68,7 +67,9 @@ export class ResponseData {
 		ipAddr: string,
 		macAddr: string,
 		alarmEnabled: boolean,
-		displayEnabled: boolean
+		displayEnabled: boolean,
+		smartAlarmEnabled: boolean,
+		smartDisplayEnabled: boolean
 	) {
 		this.hostname = hostname
 		this.uptime = uptime
@@ -77,6 +78,8 @@ export class ResponseData {
 		this.macAddr = macAddr
 		this.alarmEnabled = alarmEnabled
 		this.displayEnabled = displayEnabled
+		this.smartAlarmEnabled = smartAlarmEnabled
+		this.smartDisplayEnabled = smartDisplayEnabled
 	}
 
 	static of(data: any): ResponseData {
@@ -87,12 +90,14 @@ export class ResponseData {
 			data.meta.ipAddr,
 			data.meta.macAddr,
 			data.controls.alarmEnabled,
-			data.controls.displayEnabled
+			data.controls.displayEnabled,
+			data.controls.smartAlarmEnabled,
+			data.controls.smartDisplayEnabled
 		)
 	}
 
 	static default() {
-		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false)
+		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false)
 	}
 }
 
@@ -104,6 +109,7 @@ export default defineComponent({
 	},
 	data: function() {
 		return {
+			data: [],
 			responseData: ResponseData.default(),
 			sensorData: SensorData.default()
 		}
