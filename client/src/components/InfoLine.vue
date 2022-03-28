@@ -1,5 +1,5 @@
 <template>
-	<div class="flex align-baseline justify-evenly items-center">
+	<div class="flex justify-evenly items-center">
 		<span class="text-left text-lg font-bold w-32">{{ label }}</span>
 		<span class="text-left w-20">{{ value }}</span>
 	</div>

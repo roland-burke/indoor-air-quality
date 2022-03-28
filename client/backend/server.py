@@ -44,8 +44,6 @@ hostname = socket.gethostname()
 alarmOn = False
 
 displayWorking = False
-BME280Working = False
-CCS811Working = False
 
 controls = None
 
@@ -53,104 +51,111 @@ app = Flask(__name__, static_url_path='', static_folder='static')
 
 # LDR = Light Dependendent Resistor
 def initializeLDR():
-    try:
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(LDR_PIN,GPIO.IN)
-    except Exception as e:
-        print("Failed to initialize LDR:", e)
+	try:
+		GPIO.setmode(GPIO.BCM)
+		GPIO.setup(LDR_PIN,GPIO.IN)
+	except Exception as e:
+		print("Failed to initialize LDR:", e)
+
+def isBright():
+	return GPIO.input(LDR_PIN) == HIGH
 
 def display_thread():
-    global displayEnabled
-    while True:
-        if GPIO.input(LDR_PIN) == HIGH and displayEnabled:
-            display.update(socket.gethostname(), sensors.getData())
-        else:
-            display.clear()
-        sleep(1)
+	while True:
+		if controls.smartDisplayEnabled:
+			if isBright():
+				display.update(socket.gethostname(), sensors.getData())
+		elif controls.displayEnabled:
+			display.update(socket.gethostname(), sensors.getData())
+		else:
+			display.clear()
+		sleep(1)
 
 def saveControls(controls):
-    try:
-        controlsFile = open('controls.json', 'w+')
-        controlsFile.seek(0, 0)
-        controlsFile.write(json.dumps(controls.toJson(), indent = 4))
-    except Exception as e:
-        print("Failed to save controls:", e)
-    finally:
-	    controlsFile.close()
+	try:
+		controlsFile = open('controls.json', 'w+')
+		controlsFile.seek(0, 0)
+		controlsFile.write(json.dumps(controls.toJson(), indent = 4))
+	except Exception as e:
+		print("Failed to save controls:", e)
+	finally:
+		controlsFile.close()
 
  
 def loadControls():
-    global controls
+	global controls
 
-    try:
-        controlsFile = open('controls.json', 'r+')
-        controlsFile.seek(0, 0)
-        loaded = json.load(controlsFile)
-        controls = ControlsModel.of(loaded)
-    except Exception as e:
-        controls = ControlsModel.initial()
-        print("Failed to load controls:", e)
-    finally:
-        controlsFile.close()
+	try:
+		controlsFile = open('controls.json', 'r+')
+		controlsFile.seek(0, 0)
+		loaded = json.load(controlsFile)
+		controls = ControlsModel.of(loaded)
+	except Exception as e:
+		controls = ControlsModel.initial()
+		print("Failed to load controls:", e)
+	finally:
+		controlsFile.close()
 
 def getUptime():
-    uptime = time.time() - psutil.boot_time()
-    return time.strftime('%H:%M:%S', time.gmtime(uptime))
+	uptime = time.time() - psutil.boot_time()
+	return time.strftime('%H:%M:%S', time.gmtime(uptime))
 
 def getHwAddr(ifname):
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
-    except:
-        info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes("wlp0s20f3", 'utf-8')[:15]))
-    return ':'.join('%02x' % b for b in info[18:24])
+	try:
+		s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+		info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes(ifname, 'utf-8')[:15]))
+	except:
+		info = fcntl.ioctl(s.fileno(), 0x8927,  struct.pack('256s', bytes("wlp0s20f3", 'utf-8')[:15]))
+	return ':'.join('%02x' % b for b in info[18:24])
 
 def getData():
-    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
-    return getMockData()
+	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
+	return getMockData()
 
 def getMockData():
-    temperature = random.uniform(21.0, 21.5)
-    humidity = random.uniform(40.0, 42.0)
-    pressure = random.uniform(972, 974)
-    co2 = random.randint(800,820)
-    tvoc = random.randint(120,130)
-    sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc)
-    data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensorData, controls=controls)
-    return data
+	temperature = random.uniform(21.0, 21.5)
+	humidity = random.uniform(40.0, 42.0)
+	pressure = random.uniform(972, 974)
+	co2 = random.randint(800,820)
+	tvoc = random.randint(120,130)
+	sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc, sensors.BME280Working, sensors.CCS811Working)
+	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensorData, controls=controls)
+	return data
 
 def alarm():
-    alarmOn = True
-    print("ALARM ALARM")
-    #GPIO.setup(BUZZER_PIN,GPIO.OUT)
+	global alarmOn
+	# abort if another alarm is still going on or alarm is disabled
+	if alarmOn or not controls.alarmEnabled:
+		return
 
-    #for i in range(3):
-    #    GPIO.output(BUZZER_PIN, HIGH)
-    #    time.sleep(BUZZER_DURATION)
+	# abort if smart alarm is enabled and its dark outside
+	if controls.smartAlarmEnabled and not isBright():
+		return
 
-    #    GPIO.output(BUZZER_PIN, LOW)
-    #    time.sleep(BUZZER_PAUSE)
+	alarmOn = True
+	print("ALARM ALARM ALARM")
 
-    #GPIO.output(BUZZER_PIN, LOW)
-    alarmOn = False
+	#GPIO.setup(BUZZER_PIN,GPIO.OUT)
+	#for i in range(3):
+	#	GPIO.output(BUZZER_PIN, HIGH)
+	#	time.sleep(BUZZER_DURATION)
+	#	GPIO.output(BUZZER_PIN, LOW)
+	#	time.sleep(BUZZER_PAUSE)
+	#GPIO.output(BUZZER_PIN, LOW)
+
+	alarmOn = False
 
 
 def setup():
-    global displayWorking
-    global BME280Working
-    global CCS811Working
-    loadControls()
+	global displayWorking
+	loadControls()
 
-    displayWorking = display.initialize()
-    initializeLDR()
-
-    BME280Working = sensors.initializeBME280()
-    CCS811Working = sensors.initializeCCS811()
-
+	displayWorking = display.initialize()
+	initializeLDR()
 
 # data must be a string
 def getResponse(data, statusCode):
-    return Response(data, status=statusCode, mimetype='application/json')
+	return Response(data, status=statusCode, mimetype='application/json')
 
 @app.route('/', methods = ['GET'])
 def welcome():
@@ -158,34 +163,34 @@ def welcome():
 
 @app.route('/api/data', methods = ['GET'])
 def data():
-    return getResponse(json.dumps(getData().toJson()), 200)
+	return getResponse(json.dumps(getData().toJson()), 200)
 
 @app.route('/api/alarm/test', methods = ['POST'])
 def testAlarm():
-    if(not alarmOn):
-        alarm()
-        return getResponse(json.dumps({'status': 'success'}), 200)
-    else:
-        return getResponse(json.dumps({'status': 'alarm still in progress'}), 423)
+	if(not alarmOn):
+		alarm()
+		return getResponse(json.dumps({'status': 'success'}), 200)
+	else:
+		return getResponse(json.dumps({'status': 'alarm still in progress'}), 423)
 
 @app.route('/api/controls', methods = ['POST'])
 def setControls():
-    global controls
-    print(req.json)
-    try:
-        controls = ControlsModel.of(req.json)
-        saveControls(controls)
-    except:
-        return getResponse(json.dumps({'status' : 'error'}), 500)
-    return getResponse(json.dumps({'status' : 'success'}), 200)
+	global controls
+	print(req.json)
+	try:
+		controls = ControlsModel.of(req.json)
+		saveControls(controls)
+	except:
+		return getResponse(json.dumps({'status' : 'error'}), 500)
+	return getResponse(json.dumps({'status' : 'success'}), 200)
 
 if __name__ == '__main__':
-    setup()
+	setup()
 
-    displayThread = Thread(target = display_thread)
-    myThread = displayThread.start()
-    thread.daemon=True
-    
-    cors = CORS(app)
-    app.config['CORS_HEADERS'] = 'Content-Type'
-    app.run(debug=False, port=5000, host='0.0.0.0')
+	displayThread = Thread(target = display_thread)
+	myThread = displayThread.start()
+	thread.daemon=True
+	
+	cors = CORS(app)
+	app.config['CORS_HEADERS'] = 'Content-Type'
+	app.run(debug=False, port=5000, host='0.0.0.0')

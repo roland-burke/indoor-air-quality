@@ -121,7 +121,6 @@ export default defineComponent({
 				smartAlarmEnabled: this.smartAlarmChecked
 
 			}
-			console.log(data)
 			var completeUrl = this.hostUrl + '/api/controls'
 			return axios.post(completeUrl, data)
 		},

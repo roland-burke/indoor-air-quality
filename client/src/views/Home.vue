@@ -17,13 +17,17 @@ export class SensorData {
 	pressure: number
 	co2: number
 	tvoc: number
+	bme280Status: boolean
+	ccs811Status: boolean
 
 	constructor(
 		temperature: number,
 		humidity: number,
 		pressure: number,
 		co2: number,
-		tvoc: number
+		tvoc: number,
+		bme280Status: boolean,
+		ccs811Status: boolean
 
 	) {
 		this.temperature = temperature
@@ -31,6 +35,8 @@ export class SensorData {
 		this.pressure = pressure
 		this.co2 = co2
 		this.tvoc = tvoc
+		this.bme280Status = bme280Status
+		this.ccs811Status = ccs811Status
 	}
 
 	static of(data: any): SensorData {
@@ -39,12 +45,14 @@ export class SensorData {
 			data.humidity,
 			data.pressure,
 			data.co2,
-			data.tvoc
+			data.tvoc,
+			data.bme280Status,
+			data.ccs811Status
 		)
 	}
 
 	static default() {
-		return new SensorData(0, 0, 0, 0, 0)
+		return new SensorData(0, 0, 0, 0, 0, false, false)
 	}
 }
 

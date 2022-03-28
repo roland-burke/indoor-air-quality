@@ -29,8 +29,8 @@
 				<div>
 					<div class="flex justify-evenly items-center mt-2">
 						<div>
-							<StatusLine :label="'BME280:'" :value="false"></StatusLine>
-							<StatusLine :label="'CCS811:'" :value="true"></StatusLine>
+							<StatusLine :label="'BME280:'" :value="this.sensorData.bme280Status"></StatusLine>
+							<StatusLine :label="'CCS811:'" :value="this.sensorData.ccs811Status"></StatusLine>
 							<StatusLine :label="'Display:'" :value="false"></StatusLine>
 						</div>
 						<div>
