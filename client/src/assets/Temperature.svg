@@ -1,0 +1,20 @@
+<svg width="242" height="487" viewBox="0 0 242 487" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="path-1-inside-1_12_10" fill="white">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M95.5 0C68.7142 0 47 21.7142 47 48.5V310.001C18.8804 326.497 0 357.043 0 392C0 444.467 42.5329 487 95 487C147.467 487 190 444.467 190 392C190 357.459 171.566 327.224 144 310.595V48.5C144 21.7142 122.286 0 95.5 0Z"/>
+</mask>
+<path d="M47 310.001L57.1199 327.251L67 321.455V310.001H47ZM144 310.595H124V321.888L133.669 327.721L144 310.595ZM67 48.5C67 32.7599 79.7599 20 95.5 20V-20C57.6685 -20 27 10.6685 27 48.5H67ZM67 310.001V48.5H27V310.001H67ZM20 392C20 364.427 34.8679 340.305 57.1199 327.251L36.8801 292.75C2.89285 312.688 -20 349.659 -20 392H20ZM95 467C53.5786 467 20 433.421 20 392H-20C-20 455.513 31.4873 507 95 507V467ZM170 392C170 433.421 136.421 467 95 467V507C158.513 507 210 455.513 210 392H170ZM133.669 327.721C155.485 340.88 170 364.755 170 392H210C210 350.164 187.648 313.568 154.331 293.47L133.669 327.721ZM124 48.5V310.595H164V48.5H124ZM95.5 20C111.24 20 124 32.7599 124 48.5H164C164 10.6685 133.332 -20 95.5 -20V20Z" fill="black" mask="url(#path-1-inside-1_12_10)"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M95.5 171C86.3873 171 79 178.387 79 187.5V346.731C60.3569 353.321 47 371.1 47 392C47 418.51 68.4903 440 95 440C121.51 440 143 418.51 143 392C143 371.476 130.119 353.961 112 347.097V187.5C112 178.387 104.613 171 95.5 171Z" fill="url(#paint0_linear_12_10)"/>
+<rect x="166" y="106" width="76" height="18" rx="9" fill="black"/>
+<rect x="166" y="188" width="76" height="18" rx="9" fill="black"/>
+<rect x="166" y="229" width="45" height="18" rx="9" fill="black"/>
+<rect x="166" y="270" width="76" height="18" rx="9" fill="black"/>
+<rect x="166" y="147" width="45" height="18" rx="9" fill="black"/>
+<defs>
+<linearGradient id="paint0_linear_12_10" x1="95" y1="171" x2="95" y2="440" gradientUnits="userSpaceOnUse">
+<stop stop-color="#FF0808"/>
+<stop offset="0.9998" stop-color="#1756D0" stop-opacity="0.913021"/>
+<stop offset="0.9999" stop-color="#2A18FF" stop-opacity="0.908991"/>
+<stop offset="1" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>

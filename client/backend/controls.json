@@ -1,6 +1,6 @@
 {
     "alarmEnabled": true,
-    "displayEnabled": true,
+    "displayEnabled": false,
     "smartAlarmEnabled": false,
     "smartDisplayEnabled": false
 }

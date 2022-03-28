@@ -1,7 +1,10 @@
 <template>
-	<div class="flex justify-evenly items-center">
-		<span class="text-left text-lg font-bold w-32">{{ label }}</span>
-		<span class="text-left w-20">{{ value }}</span>
+	<div class="flex justify-evenly items-center my-3">
+		<div class="w-7">
+			<img :src="icon" />
+		</div>
+		<span v-if="label != null" class="text-left text-lg font-bold w-24">{{ label }}</span>
+		<span class="text-left text-lg w-20">{{ value }}</span>
 	</div>
 </template>
 
@@ -12,7 +15,8 @@ export default defineComponent({
 	name: 'InfoLine',
 	props: {
 		label: String,
-		value: String
+		value: String,
+		icon: null
 	}
 })
 </script>

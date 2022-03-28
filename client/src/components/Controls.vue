@@ -1,6 +1,6 @@
 <template>
 	<div class="flex justify-center">
-		<fieldset class="mx-5 mb-5 p-4 w-5/6 max-w-2xl border-4 rounded-xl shadow-md border-blue-400">
+		<fieldset class="mx-5 mb-8 p-4 w-5/6 max-w-2xl border-4 rounded-xl shadow-md border-blue-400">
 			<legend class="text-2xl px-2 text-left">Controls</legend>
 			<div class="divide-y divide-solid">
 				<div>

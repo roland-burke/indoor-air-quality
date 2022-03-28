@@ -34,9 +34,9 @@
 							<StatusLine :label="'Display:'" :value="false"></StatusLine>
 						</div>
 						<div>
-							<InfoLine :label="'Temperature:'" :value="this.sensorData.temperature.toFixed(1) + ' °C'"></InfoLine>
-							<InfoLine :label="'Humidity:'" :value="this.sensorData.humidity.toFixed(0) + ' %'"></InfoLine>
-							<InfoLine :label="'Pressure:'" :value="this.sensorData.pressure.toFixed(0) + ' hPa'"></InfoLine>
+							<InfoLine :icon="require('@/assets/Temperature.svg')" :value="this.sensorData.temperature.toFixed(1) + ' °C'"></InfoLine>
+							<InfoLine :icon="require('@/assets/Humidity.svg')" :value="this.sensorData.humidity.toFixed(0) + ' %'"></InfoLine>
+							<InfoLine :icon="require('@/assets/Pressure.svg')" :value="this.sensorData.pressure.toFixed(0) + ' hPa'"></InfoLine>
 							<InfoLine :label="'TVOC:'" :value="this.sensorData.tvoc.toFixed(0) + ' ppb'"></InfoLine>
 							<InfoLine :label="'CO2:'" :value="this.sensorData.co2.toFixed(0) + ' ppm'"></InfoLine>
 						</div>
