@@ -26,20 +26,21 @@
 					</div>
 				</div>
 
-				<div>
-					<div class="flex justify-evenly items-center mt-2">
-						<div>
-							<StatusLine :label="'BME280:'" :value="this.sensorData.bme280Status"></StatusLine>
-							<StatusLine :label="'CCS811:'" :value="this.sensorData.ccs811Status"></StatusLine>
-							<StatusLine :label="'Display:'" :value="false"></StatusLine>
-						</div>
-						<div>
-							<InfoLine :icon="require('@/assets/Temperature.svg')" :value="this.sensorData.temperature.toFixed(1) + ' °C'"></InfoLine>
-							<InfoLine :icon="require('@/assets/Humidity.svg')" :value="this.sensorData.humidity.toFixed(0) + ' %'"></InfoLine>
-							<InfoLine :icon="require('@/assets/Pressure.svg')" :value="this.sensorData.pressure.toFixed(0) + ' hPa'"></InfoLine>
-							<InfoLine :label="'TVOC:'" :value="this.sensorData.tvoc.toFixed(0) + ' ppb'"></InfoLine>
-							<InfoLine :label="'CO2:'" :value="this.sensorData.co2.toFixed(0) + ' ppm'"></InfoLine>
-						</div>
+				<div class="flex justify-evenly items-center pt-2 my-2">
+					<StatusLine :label="'BME280:'" :value="this.sensorData.bme280Status"></StatusLine>
+					<StatusLine :label="'CCS811:'" :value="this.sensorData.ccs811Status"></StatusLine>
+					<StatusLine :label="'Display:'" :value="false"></StatusLine>
+				</div>
+
+				<div class="flex justify-evenly items-center">
+					<div class="flex flex-col">
+						<InfoLine :icon="require('@/assets/Temperature.svg')" :value="this.sensorData.temperature.toFixed(1) + ' °C'"></InfoLine>
+						<InfoLine :icon="require('@/assets/Humidity.svg')" :value="this.sensorData.humidity.toFixed(0) + ' %'"></InfoLine>
+						<InfoLine :icon="require('@/assets/Pressure.svg')" :value="this.sensorData.pressure.toFixed(0) + ' hPa'"></InfoLine>
+					</div>
+					<div class="flex flex-col justify-center items-center">
+						<InfoLine :label="'TVOC:'" :value="this.sensorData.tvoc.toFixed(0) + ' ppb'"></InfoLine>
+						<InfoLine :label="'CO2:'" :value="this.sensorData.co2.toFixed(0) + ' ppm'"></InfoLine>
 					</div>
 				</div>
 			</div>

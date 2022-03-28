@@ -1,10 +1,10 @@
 <template>
-	<div class="flex justify-evenly items-center my-3">
-		<div class="w-7">
+	<div class="flex justify-evenly items-center my-2">
+		<div class="w-7 mr-3">
 			<img :src="icon" />
 		</div>
-		<span v-if="label != null" class="text-left text-lg font-bold w-24">{{ label }}</span>
-		<span class="text-left text-lg w-20">{{ value }}</span>
+		<span v-if="label != null" class="text-left font-bold mr-3">{{ label }}</span>
+		<span class="text-left text-xl w-20">{{ value }}</span>
 	</div>
 </template>
 
