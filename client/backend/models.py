@@ -4,32 +4,35 @@ class ControlsModel:
 	displayEnabled = True
 	smartAlarmEnabled = False
 	smartDisplayEnabled = False
+	displayMode = False
 
-	def __init__(self, alarmEnabled, displayEnabled, smartAlarmEnabled, smartDisplayEnabled):
+	def __init__(self, alarmEnabled, displayEnabled, smartAlarmEnabled, smartDisplayEnabled, displayMode):
 		self.alarmEnabled = alarmEnabled
 		self.displayEnabled = displayEnabled
 		self.smartAlarmEnabled = smartAlarmEnabled
 		self.smartDisplayEnabled = smartDisplayEnabled
+		self.displayMode = displayMode
 
 	def toJson(self):
 		return {
 			'alarmEnabled': self.alarmEnabled,
 			'displayEnabled': self.displayEnabled,
 			'smartAlarmEnabled': self.smartAlarmEnabled,
-			'smartDisplayEnabled': self.smartDisplayEnabled
+			'smartDisplayEnabled': self.smartDisplayEnabled,
+			'displayMode': self.displayMode
 		}
 
 	@staticmethod
 	def of(controls):
 		try:
-			return ControlsModel(controls['alarmEnabled'], controls['displayEnabled'], controls['smartAlarmEnabled'], controls['smartDisplayEnabled'])
+			return ControlsModel(controls['alarmEnabled'], controls['displayEnabled'], controls['smartAlarmEnabled'], controls['smartDisplayEnabled'], controls['displayMode'])
 		except Exception as e:
 			print("Error parsing controls:", e)
-			return ControlsModel(False, True, False, False)
+			return ControlsModel(False, True, False, False, False)
 
 	@staticmethod
 	def initial():
-		return ControlsModel(False, True, False, False)
+		return ControlsModel(False, True, False, False, False)
 
 
 class SensorDataModel:

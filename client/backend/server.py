@@ -1,29 +1,27 @@
 # general
-from concurrent.futures import thread
-from time import sleep
-import json
-from threading import Thread
-import time
-from typing import final
-import psutil # for uptime
-import random
-
-import sensors
-import display
-from models import ControlsModel, DataModel, SensorDataModel
-
-# webserver
-from flask import Flask, send_from_directory
-from flask_cors import CORS
-from flask import Response
-from flask import request as req
-
 import fcntl
+import json
+import random
 import socket
 import struct
+import time
+from concurrent.futures import thread
+from threading import Thread
+from time import sleep
+from typing import final
 
+import psutil  # for uptime
 # hardware
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
+# webserver
+from flask import Flask, Response
+from flask import request as req
+from flask import send_from_directory
+from flask_cors import CORS
+
+import display
+import sensors
+from models import ControlsModel, DataModel, SensorDataModel
 
 # Constants
 BUZZER_DURATION = 1 # seconds
@@ -40,6 +38,8 @@ ROOM_IDENTIFIER = "rolands-zimmer"
 xDistance = 0 # distance to next vertical wall
 yDistance = 0 # height, distance from ground
 hostname = socket.gethostname()
+
+updateRate = 2 # seconds
 
 alarmOn = False
 
@@ -69,7 +69,7 @@ def display_thread():
 			display.update(socket.gethostname(), sensors.getData())
 		else:
 			display.clear()
-		sleep(1)
+		sleep(updateRate)
 
 def saveControls(controls):
 	try:
@@ -110,7 +110,7 @@ def getHwAddr(ifname):
 
 def getData():
 	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
-	return getMockData()
+	return data
 
 def getMockData():
 	temperature = random.uniform(21.0, 21.5)
@@ -133,15 +133,14 @@ def alarm():
 		return
 
 	alarmOn = True
-	print("ALARM ALARM ALARM")
 
-	#GPIO.setup(BUZZER_PIN,GPIO.OUT)
-	#for i in range(3):
-	#	GPIO.output(BUZZER_PIN, HIGH)
-	#	time.sleep(BUZZER_DURATION)
-	#	GPIO.output(BUZZER_PIN, LOW)
-	#	time.sleep(BUZZER_PAUSE)
-	#GPIO.output(BUZZER_PIN, LOW)
+	GPIO.setup(BUZZER_PIN,GPIO.OUT)
+	for i in range(2):
+		GPIO.output(BUZZER_PIN, HIGH)
+		time.sleep(BUZZER_DURATION)
+		GPIO.output(BUZZER_PIN, LOW)
+		time.sleep(BUZZER_PAUSE)
+	GPIO.output(BUZZER_PIN, LOW)
 
 	alarmOn = False
 
@@ -180,6 +179,12 @@ def setControls():
 	try:
 		controls = ControlsModel.of(req.json)
 		saveControls(controls)
+
+		# TODO: Refactor
+		if controls.displayMode:
+			display.setMode(1)
+		else:
+			display.setMode(0)
 	except:
 		return getResponse(json.dumps({'status' : 'error'}), 500)
 	return getResponse(json.dumps({'status' : 'success'}), 200)

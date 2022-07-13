@@ -76,6 +76,24 @@
 					</div>
 				</div>
 				<div>
+						<div class="flex justify-between items-center mt-3 mb-3">
+							<div class="flex flex-col">
+								<h2 class="ml-2 text-xl text-left font-bold">Pair View</h2>
+								<h3 class="ml-2 text-left">Switch between values and show always pairs</h3>
+							</div>
+							<div class="flex justify-between items-center" @click="togglePair()">
+								<div class="w-20 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400': displayMode }">
+									<div
+										class="bg-white w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out"
+										:class="{
+											'translate-x-10': displayMode,
+										}"
+									></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<div>
 					<div class="mt-4">
 						<button v-on:click="testAlarm()" class="hover:bg-green-400 rounded-lg bg-transparent p-2 border-2">Test Alarm</button>
 					</div>
@@ -101,7 +119,8 @@ export default defineComponent({
 			alarmChecked: this.responseData.alarmEnabled,
 			displayChecked: this.responseData.displayEnabled,
 			smartAlarmChecked: this.responseData.smartAlarmEnabled,
-			smartDisplayChecked: this.responseData.smartDisplayEnabled
+			smartDisplayChecked: this.responseData.smartDisplayEnabled,
+			displayMode: this.responseData.displayMode
 		}
 	},
 	watch: {
@@ -110,6 +129,7 @@ export default defineComponent({
 			this.displayChecked = data.displayEnabled
 			this.smartAlarmChecked = data.smartAlarmEnabled
 			this.smartDisplayChecked = data.smartDisplayEnabled
+			this.displayMode = data.displayMode
 		}
 	},
 	methods: {
@@ -118,7 +138,8 @@ export default defineComponent({
 				displayEnabled: this.displayChecked,
 				alarmEnabled: this.alarmChecked,
 				smartDisplayEnabled: this.smartDisplayChecked,
-				smartAlarmEnabled: this.smartAlarmChecked
+				smartAlarmEnabled: this.smartAlarmChecked,
+				displayMode: this.displayMode
 
 			}
 			var completeUrl = this.hostUrl + '/api/controls'
@@ -158,6 +179,12 @@ export default defineComponent({
 		},
 		toggleSmartDisplay: function() {
 			this.smartDisplayChecked = !this.smartDisplayChecked
+			this.saveControls().then((response: any) => {
+				console.log(response)
+			})
+		},
+		togglePair: function() {
+			this.displayMode = !this.displayMode
 			this.saveControls().then((response: any) => {
 				console.log(response)
 			})

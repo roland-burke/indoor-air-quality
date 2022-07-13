@@ -1,9 +1,9 @@
 # sensors
-#from adafruit_bme280 import basic as adafruit_bme280
-#import adafruit_ccs811
-#import busio
+import adafruit_ccs811
+import board
+import busio
+from adafruit_bme280 import basic as adafruit_bme280
 
-#import board
 from models import SensorDataModel
 
 bme280 = None

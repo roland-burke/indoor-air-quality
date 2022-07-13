@@ -67,6 +67,7 @@ export class ResponseData {
 	displayEnabled: boolean
 	smartAlarmEnabled: boolean
 	smartDisplayEnabled: boolean
+	displayMode: boolean
 
 	constructor(
 		hostname: string,
@@ -77,7 +78,8 @@ export class ResponseData {
 		alarmEnabled: boolean,
 		displayEnabled: boolean,
 		smartAlarmEnabled: boolean,
-		smartDisplayEnabled: boolean
+		smartDisplayEnabled: boolean,
+		displayMode: boolean
 	) {
 		this.hostname = hostname
 		this.uptime = uptime
@@ -88,6 +90,7 @@ export class ResponseData {
 		this.displayEnabled = displayEnabled
 		this.smartAlarmEnabled = smartAlarmEnabled
 		this.smartDisplayEnabled = smartDisplayEnabled
+		this.displayMode = displayMode
 	}
 
 	static of(data: any): ResponseData {
@@ -100,12 +103,13 @@ export class ResponseData {
 			data.controls.alarmEnabled,
 			data.controls.displayEnabled,
 			data.controls.smartAlarmEnabled,
-			data.controls.smartDisplayEnabled
+			data.controls.smartDisplayEnabled,
+			data.controls.displayMode
 		)
 	}
 
 	static default() {
-		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false)
+		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false, false)
 	}
 }
 
@@ -142,8 +146,8 @@ export default defineComponent({
 		},
 
 		getUrl: function() {
-			// var url = document.location.protocol + '//' + document.location.host
-			var url = 'http://localhost:5000'
+			var url = document.location.protocol + '//' + document.location.host
+			// var url = 'http://localhost:5000'
 			return url
 		}
 	}
