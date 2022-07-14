@@ -24,7 +24,7 @@ oled = None
 
 # 0 = Show everything: hostname, temp, hum, pressure, tvoc, c02
 # 1 = Show 2 values and swithc: temp hum - tvoc co2 - pressure calculated height
-displayMode = 1
+displayMode = 0
 
 # indicates which data is shown
 # 0 = temp hum

@@ -72,6 +72,7 @@ export class ResponseData {
 	smartAlarmEnabled: boolean
 	smartDisplayEnabled: boolean
 	displayMode: number
+	displayWorking: boolean
 
 	constructor(
 		hostname: string,
@@ -83,7 +84,8 @@ export class ResponseData {
 		displayEnabled: boolean,
 		smartAlarmEnabled: boolean,
 		smartDisplayEnabled: boolean,
-		displayMode: number
+		displayMode: number,
+		displayWorking: boolean
 	) {
 		this.hostname = hostname
 		this.uptime = uptime
@@ -95,6 +97,7 @@ export class ResponseData {
 		this.smartAlarmEnabled = smartAlarmEnabled
 		this.smartDisplayEnabled = smartDisplayEnabled
 		this.displayMode = displayMode
+		this.displayWorking = displayWorking
 	}
 
 	static of(data: any): ResponseData {
@@ -108,12 +111,13 @@ export class ResponseData {
 			data.controls.displayEnabled,
 			data.controls.smartAlarmEnabled,
 			data.controls.smartDisplayEnabled,
-			data.controls.displayMode
+			data.controls.displayMode,
+			data.displayWorking
 		)
 	}
 
 	static default() {
-		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false, 0)
+		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false, 0, false)
 	}
 }
 

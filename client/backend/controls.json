@@ -2,5 +2,6 @@
     "alarmEnabled": true,
     "displayEnabled": true,
     "smartAlarmEnabled": false,
-    "smartDisplayEnabled": false
+    "smartDisplayEnabled": false,
+	"displayMode": 0
 }

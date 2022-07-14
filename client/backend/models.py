@@ -77,20 +77,22 @@ class DataModel:
 	uptime = None
 	ipAddr = "0.0.0.0"
 	macAddr = ""
+	displayWorking = True
 
 	# sensor data
-	sensors = SensorDataModel(0, 0, 0, 0, 0, False, False)
+	sensors = SensorDataModel(0, 0, 0, 0, 0, 0, False, False)
 
 	# controls
 	alarmEnabled = False
 	displayEnabled = False
 
-	def __init__(self, host, room, uptime, sensors, controls, ipAddr, macAddr):
+	def __init__(self, host, room, uptime, displayWorking, sensors, controls, ipAddr, macAddr):
 		self.hostname = host
 		self.room = room
 		self.uptime = uptime
 		self.ipAddr = ipAddr
 		self.macAddr = macAddr
+		self.displayWorking = displayWorking
 
 		self.sensors = sensors
 		self.controls = controls
@@ -104,6 +106,7 @@ class DataModel:
 			'ipAddr': self.ipAddr,
 			'macAddr': self.macAddr
 			},
+		'displayWorking': self.displayWorking,
 		'controls': self.controls.toJson(),
 		'sensors': self.sensors.toJson()
 		}

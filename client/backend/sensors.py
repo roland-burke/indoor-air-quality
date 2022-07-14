@@ -1,6 +1,4 @@
 # sensors
-import math
-
 import adafruit_ccs811
 import board
 import busio
@@ -38,7 +36,7 @@ def initializeCCS811():
 		return False
 
 def getTempHumIndex(temp, hum):
-	temp = math.round(temp)
+	temp = round(temp)
 
 	if temp == 16:
 		if hum <= 85 and hum >= 45:
@@ -117,7 +115,15 @@ def getIndexLevel(temp, hum, co2, tvoc):
 	else:
 		tvocIndex = 6
 
-	return round((co2Index + tvocIndex + tempHumIndex) / 3, 0)
+	if BME280Working and CCS811Working:
+		return round((co2Index + tvocIndex + tempHumIndex) / 3, 0)
+
+	if BME280Working and not CCS811Working:
+		return tempHumIndex
+		
+	if not BME280Working and CCS811Working:
+		return round((co2Index + tvocIndex) / 2, 0)
+	return 0
 
 def getData():
 	global BME280Working

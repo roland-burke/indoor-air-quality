@@ -29,7 +29,7 @@
 				<div class="flex justify-evenly items-center pt-2 my-2">
 					<StatusLine :label="'BME280:'" :value="this.sensorData.bme280Status"></StatusLine>
 					<StatusLine :label="'CCS811:'" :value="this.sensorData.ccs811Status"></StatusLine>
-					<StatusLine :label="'Display:'" :value="false"></StatusLine>
+					<StatusLine :label="'Display:'" :value="this.responseData.displayWorking"></StatusLine>
 				</div>
 
 				<div class="flex justify-evenly items-center">
@@ -44,7 +44,7 @@
 					</div>
 				</div>
 				<div class="pt-5">
-					<QualityIndex :value="this.sensorData.indexLevel"></QualityIndex>
+					<QualityIndex :indexLevel="this.sensorData.indexLevel"></QualityIndex>
 				</div>
 			</div>
 		</fieldset>

@@ -1,13 +1,13 @@
 <template>
 	<div class="flex border-2 h-6">
-		<div v-if="indexLevel > 0" class="bg-blue-400 w-1/6 h-5"></div>
-		<div v-if="indexLevel > 1" class="bg-green-400 w-1/6 h-5"></div>
-		<div v-if="indexLevel > 2" class="bg-yellow-300 w-1/6 h-5"></div>
-		<div v-if="indexLevel > 3" class="bg-yellow-500 w-1/6 h-5"></div>
-		<div v-if="indexLevel > 4" class="bg-red-500 w-1/6 h-5"></div>
-		<div v-if="indexLevel > 5" class="bg-red-700 w-1/6 h-5"></div>
+		<div v-if="this.indexLevel > 0" class="bg-blue-400 w-1/6 h-5"></div>
+		<div v-if="this.indexLevel > 1" class="bg-green-400 w-1/6 h-5"></div>
+		<div v-if="this.indexLevel > 2" class="bg-yellow-300 w-1/6 h-5"></div>
+		<div v-if="this.indexLevel > 3" class="bg-yellow-500 w-1/6 h-5"></div>
+		<div v-if="this.indexLevel > 4" class="bg-red-500 w-1/6 h-5"></div>
+		<div v-if="this.indexLevel > 5" class="bg-red-700 w-1/6 h-5"></div>
 	</div>
-	<div>Level: {{ indexLevel }} ({{getLevelName(indexLevel)}})</div>
+	<div>Level: {{ indexLevel }} ({{this.getLevelName(this.indexLevel)}})</div>
 </template>
 
 <script lang='ts'>
@@ -35,7 +35,7 @@ export default defineComponent({
 			case 6:
 				return 'Dangerous'
 			default:
-				return 'Undefiend'
+				return 'Undefined'
 			}
 		}
 	}
