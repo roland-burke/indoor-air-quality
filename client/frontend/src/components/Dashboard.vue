@@ -43,6 +43,9 @@
 						<InfoLine :label="'CO2:'" :value="this.sensorData.co2.toFixed(0) + ' ppm'"></InfoLine>
 					</div>
 				</div>
+				<div class="pt-5">
+					<QualityIndex :value="this.sensorData.indexLevel"></QualityIndex>
+				</div>
 			</div>
 		</fieldset>
 	</div>
@@ -53,9 +56,10 @@ import { defineComponent } from 'vue'
 import { ResponseData, SensorData } from '@/views/Home.vue'
 import InfoLine from './InfoLine.vue'
 import StatusLine from './StatusLine.vue'
+import QualityIndex from './QualityIndex.vue'
 
 export default defineComponent({
-	components: { InfoLine, StatusLine },
+	components: { InfoLine, StatusLine, QualityIndex },
 	name: 'Dashboard',
 	props: {
 		responseData: ResponseData,

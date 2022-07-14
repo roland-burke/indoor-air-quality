@@ -17,6 +17,7 @@ export class SensorData {
 	pressure: number
 	co2: number
 	tvoc: number
+	indexLevel: number
 	bme280Status: boolean
 	ccs811Status: boolean
 
@@ -26,6 +27,7 @@ export class SensorData {
 		pressure: number,
 		co2: number,
 		tvoc: number,
+		indexLevel: number,
 		bme280Status: boolean,
 		ccs811Status: boolean
 
@@ -35,6 +37,7 @@ export class SensorData {
 		this.pressure = pressure
 		this.co2 = co2
 		this.tvoc = tvoc
+		this.indexLevel = indexLevel
 		this.bme280Status = bme280Status
 		this.ccs811Status = ccs811Status
 	}
@@ -46,13 +49,14 @@ export class SensorData {
 			data.pressure,
 			data.co2,
 			data.tvoc,
+			data.indexLevel,
 			data.bme280Status,
 			data.ccs811Status
 		)
 	}
 
 	static default() {
-		return new SensorData(0, 0, 0, 0, 0, false, false)
+		return new SensorData(0, 0, 0, 0, 0, 0, false, false)
 	}
 }
 

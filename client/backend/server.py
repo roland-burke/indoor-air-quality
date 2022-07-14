@@ -109,7 +109,7 @@ def getHwAddr(ifname):
 	return ':'.join('%02x' % b for b in info[18:24])
 
 def getData():
-	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), indexLevel=0, sensors=sensors.getData(), controls=controls)
+	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
 	return data
 
 def getMockData():
@@ -118,7 +118,9 @@ def getMockData():
 	pressure = random.uniform(972, 974)
 	co2 = random.randint(800,820)
 	tvoc = random.randint(120,130)
-	sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc, sensors.BME280Working, sensors.CCS811Working)
+	indexLevel = random.randint(0, 6)
+
+	sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc, indexLevel, sensors.BME280Working, sensors.CCS811Working)
 	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensorData, controls=controls)
 	return data
 
