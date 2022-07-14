@@ -42,16 +42,19 @@ class SensorDataModel:
 	pressure = 0.0
 	co2 = 0.0
 	tvoc = 0.0
+	indexLevel = 0
 
 	bme280Status = False
 	ccs811Status = False
 
-	def __init__(self, temp, hum, pressure, co2, tvoc, bme280Status, ccs811Status):
+	def __init__(self, temp, hum, pressure, co2, tvoc, indexLevel, bme280Status, ccs811Status):
 		self.temperature = temp
 		self.humidity = hum
 		self.pressure = pressure
 		self.co2 = co2
 		self.tvoc = tvoc
+		self.indexLevel = indexLevel
+
 		self.bme280Status = bme280Status
 		self.ccs811Status = ccs811Status
 
@@ -62,6 +65,7 @@ class SensorDataModel:
 			'pressure': round(self.pressure, 2),
 			'co2': self.co2,
 			'tvoc': self.tvoc,
+			'indexLevel': self.indexLevel,
 			'bme280Status': self.bme280Status,
 			'ccs811Status': self.ccs811Status
 		}
@@ -71,6 +75,8 @@ class DataModel:
 	hostname = ""
 	room = ""
 	uptime = None
+	ipAddr = "0.0.0.0"
+	macAddr = ""
 
 	# sensor data
 	sensors = SensorDataModel(0, 0, 0, 0, 0, False, False)
