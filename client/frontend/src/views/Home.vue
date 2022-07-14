@@ -67,7 +67,7 @@ export class ResponseData {
 	displayEnabled: boolean
 	smartAlarmEnabled: boolean
 	smartDisplayEnabled: boolean
-	displayMode: boolean
+	displayMode: number
 
 	constructor(
 		hostname: string,
@@ -79,7 +79,7 @@ export class ResponseData {
 		displayEnabled: boolean,
 		smartAlarmEnabled: boolean,
 		smartDisplayEnabled: boolean,
-		displayMode: boolean
+		displayMode: number
 	) {
 		this.hostname = hostname
 		this.uptime = uptime
@@ -109,7 +109,7 @@ export class ResponseData {
 	}
 
 	static default() {
-		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false, false)
+		return new ResponseData('n.A.', 'n.A.', 'n.A.', 'n.A.', 'n.A.', false, false, false, false, 0)
 	}
 }
 

@@ -4,7 +4,7 @@ class ControlsModel:
 	displayEnabled = True
 	smartAlarmEnabled = False
 	smartDisplayEnabled = False
-	displayMode = False
+	displayMode = 0
 
 	def __init__(self, alarmEnabled, displayEnabled, smartAlarmEnabled, smartDisplayEnabled, displayMode):
 		self.alarmEnabled = alarmEnabled
@@ -28,11 +28,11 @@ class ControlsModel:
 			return ControlsModel(controls['alarmEnabled'], controls['displayEnabled'], controls['smartAlarmEnabled'], controls['smartDisplayEnabled'], controls['displayMode'])
 		except Exception as e:
 			print("Error parsing controls:", e)
-			return ControlsModel(False, True, False, False, False)
+			return ControlsModel(False, True, False, False, 0)
 
 	@staticmethod
 	def initial():
-		return ControlsModel(False, True, False, False, False)
+		return ControlsModel(False, True, False, False, 0)
 
 
 class SensorDataModel:

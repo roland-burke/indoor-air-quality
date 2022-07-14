@@ -76,23 +76,24 @@
 					</div>
 				</div>
 				<div>
-						<div class="flex justify-between items-center mt-3 mb-3">
-							<div class="flex flex-col">
-								<h2 class="ml-2 text-xl text-left font-bold">Pair View</h2>
-								<h3 class="ml-2 text-left">Switch between values and show always pairs</h3>
+					<div class="flex justify-between items-center mt-3 mb-3">
+
+					<ul class="items-center w-full text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+						<li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+							<div class="flex items-center pl-3">
+								<input id="horizontal-list-radio-license" @click="togglePair(0)" type="radio" value="" :checked="displayMode == 0" name="list-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500" />
+								<label for="horizontal-list-radio-license" class="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Show everything</label>
 							</div>
-							<div class="flex justify-between items-center" @click="togglePair()">
-								<div class="w-20 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400': displayMode }">
-									<div
-										class="bg-white w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out"
-										:class="{
-											'translate-x-10': displayMode,
-										}"
-									></div>
-								</div>
+						</li>
+						<li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+							<div class="flex items-center pl-3">
+								<input id="horizontal-list-radio-id" @click="togglePair(1)" type="radio" value="" :checked="displayMode == 1" name="list-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500" />
+								<label for="horizontal-list-radio-id" class="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Show data in pairs</label>
 							</div>
-						</div>
+						</li>
+					</ul>
 					</div>
+				</div>
 				<div>
 					<div class="mt-4">
 						<button v-on:click="testAlarm()" class="hover:bg-green-400 rounded-lg bg-transparent p-2 border-2">Test Alarm</button>
@@ -183,8 +184,8 @@ export default defineComponent({
 				console.log(response)
 			})
 		},
-		togglePair: function() {
-			this.displayMode = !this.displayMode
+		togglePair: function(newValue: number) {
+			this.displayMode = newValue
 			this.saveControls().then((response: any) => {
 				console.log(response)
 			})

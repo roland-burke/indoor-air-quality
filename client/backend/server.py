@@ -179,12 +179,8 @@ def setControls():
 	try:
 		controls = ControlsModel.of(req.json)
 		saveControls(controls)
+		display.setMode(controls.displayMode)
 
-		# TODO: Refactor
-		if controls.displayMode:
-			display.setMode(1)
-		else:
-			display.setMode(0)
 	except:
 		return getResponse(json.dumps({'status' : 'error'}), 500)
 	return getResponse(json.dumps({'status' : 'success'}), 200)
