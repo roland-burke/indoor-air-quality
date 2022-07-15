@@ -1,0 +1,1 @@
+MODE=prod python3 server.py

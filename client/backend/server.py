@@ -115,7 +115,10 @@ def getHwAddr(ifname):
 	return ':'.join('%02x' % b for b in info[18:24])
 
 def getData():
-	mode = os.environ['MODE']
+	try:
+		mode = os.environ['MODE']
+	except:
+		mode = ""
 
 	if mode == "dev":
 		return getMockData()
@@ -214,4 +217,15 @@ if __name__ == '__main__':
 	
 	cors = CORS(app)
 	app.config['CORS_HEADERS'] = 'Content-Type'
-	app.run(debug=False, port=5000, host='0.0.0.0')
+	
+	try:
+		mode = os.environ['MODE']
+	except:
+		mode = ""
+	
+	port = 5000
+	if mode == "prod":
+		port = 80
+
+	app.run(debug=False, port=80, host='0.0.0.0')
+		
