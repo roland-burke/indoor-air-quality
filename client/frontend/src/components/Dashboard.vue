@@ -53,7 +53,7 @@
 
 <script lang='ts'>
 import { defineComponent } from 'vue'
-import { ResponseData, SensorData } from '@/views/Home.vue'
+import { ResponseData, SensorData } from '@/Global'
 import InfoLine from './InfoLine.vue'
 import StatusLine from './StatusLine.vue'
 import QualityIndex from './QualityIndex.vue'

@@ -177,11 +177,17 @@ def data():
 
 @app.route('/api/alarm/test', methods = ['POST'])
 def testAlarm():
+	global alarmOn
 	if(not alarmOn):
-		alarm()
+		try:
+			alarm()
+		except Exception as e:
+			alarmOn = False
+			print("Alarm failed: ", e)
+			return getResponse(json.dumps({'status': 'alarm failed'}), 500)
 		return getResponse(json.dumps({'status': 'success'}), 200)
 	else:
-		return getResponse(json.dumps({'status': 'alarm still in progress'}), 423)
+		return getResponse(json.dumps({'status': 'alarm still in progress'}), 503)
 
 @app.route('/api/controls', methods = ['POST'])
 def setControls():
