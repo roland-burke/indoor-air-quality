@@ -1,0 +1,1 @@
+MODE=dev python3 server.py

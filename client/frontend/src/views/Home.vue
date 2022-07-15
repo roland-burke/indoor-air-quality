@@ -154,9 +154,10 @@ export default defineComponent({
 		},
 
 		getUrl: function() {
-			var url = document.location.protocol + '//' + document.location.host
-			// var url = 'http://localhost:5000'
-			return url
+			if (process.env.NODE_ENV === 'development') {
+				return 'http://localhost:5000'
+			}
+			return document.location.protocol + '//' + document.location.host
 		}
 	}
 })

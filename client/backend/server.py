@@ -1,6 +1,7 @@
 # general
 import fcntl
 import json
+import os
 import random
 import socket
 import struct
@@ -11,8 +12,13 @@ from time import sleep
 from typing import final
 
 import psutil  # for uptime
+
 # hardware
-import RPi.GPIO as GPIO
+try:
+	import RPi.GPIO as GPIO
+except:
+	print("Server: Imporintg RPi.GPIO failed")
+
 # webserver
 from flask import Flask, Response
 from flask import request as req
@@ -109,8 +115,12 @@ def getHwAddr(ifname):
 	return ':'.join('%02x' % b for b in info[18:24])
 
 def getData():
-	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), displayWorking=displayWorking, ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
-	return data
+	mode = os.environ['MODE']
+
+	if mode == "dev":
+		return getMockData()
+
+	return DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), displayWorking=displayWorking, ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensors.getData(), controls=controls)
 
 def getMockData():
 	temperature = random.uniform(21.0, 21.5)
@@ -121,8 +131,7 @@ def getMockData():
 	indexLevel = random.randint(0, 6)
 
 	sensorData = SensorDataModel(temperature, humidity, pressure, co2, tvoc, indexLevel, sensors.BME280Working, sensors.CCS811Working)
-	data = DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), displayWorking=displayWorking, ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensorData, controls=controls)
-	return data
+	return DataModel(host=hostname, room=ROOM_IDENTIFIER, uptime=getUptime(), displayWorking=displayWorking, ipAddr=socket.gethostbyname(socket.gethostname()), macAddr=getHwAddr("wlan0"), sensors=sensorData, controls=controls)
 
 def alarm():
 	global alarmOn
@@ -190,9 +199,12 @@ def setControls():
 if __name__ == '__main__':
 	setup()
 
-	displayThread = Thread(target = display_thread)
-	myThread = displayThread.start()
-	thread.daemon=True
+	if displayWorking:
+		displayThread = Thread(target = display_thread)
+		myThread = displayThread.start()
+		thread.daemon=True
+	else:
+		print("Server: Failed to initialize display")
 	
 	cors = CORS(app)
 	app.config['CORS_HEADERS'] = 'Content-Type'

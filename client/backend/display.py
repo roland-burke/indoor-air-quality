@@ -2,10 +2,14 @@
 from hashlib import new
 from time import sleep
 
-import adafruit_ssd1306
-import board
-import busio
-import digitalio
+try:
+	import adafruit_ssd1306
+	import board
+	import busio
+	import digitalio
+except:
+	print("Display: Imporintg adafruit_ssd1306, board, busio, digitalio failed")
+
 from PIL import Image, ImageDraw, ImageFont
 
 DISPLAY_WIDTH = 128

@@ -1,8 +1,11 @@
 # sensors
-import adafruit_ccs811
-import board
-import busio
-from adafruit_bme280 import basic as adafruit_bme280
+try:
+	import adafruit_ccs811
+	import board
+	import busio
+	from adafruit_bme280 import basic as adafruit_bme280
+except:
+	print("Sensors: Imporintg adafruit_ccs811, board, busio, adafruit_bme280 failed")
 
 from models import SensorDataModel
 
