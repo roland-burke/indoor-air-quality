@@ -15,22 +15,24 @@
 							</div>
 						</div>
 					</div>
-					<div v-if="alarmChecked" class="flex justify-between items-center mb-3">
-						<div class="flex flex-col">
-							<h2 class="ml-2 text-xl text-left font-bold">Smart Alarm</h2>
-							<h3 class="ml-2 text-left">Alarm will automatically turn off during nighttime</h3>
-						</div>
-						<div class="flex min-w-max justify-between items-center" @click="toggleSmartAlarm()">
-							<div class="flex w-20 h-10 items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400': smartAlarmChecked }">
-								<div
-									class="bg-white w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out"
-									:class="{
-										'translate-x-10': smartAlarmChecked,
-									}"
-								></div>
+					<transition name="fade" mode="out-in">
+						<div key="1" v-if="alarmChecked" class="flex justify-between items-center mb-3">
+							<div class="flex flex-col">
+								<h2 class="ml-2 text-xl text-left font-bold">Smart Alarm</h2>
+								<h3 class="ml-2 text-left">Alarm will automatically turn off during nighttime</h3>
+							</div>
+							<div class="flex min-w-max justify-between items-center" @click="toggleSmartAlarm()">
+								<div class="flex w-20 h-10 items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out" :class="{ 'bg-green-400': smartAlarmChecked }">
+									<div
+										class="bg-white w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out"
+										:class="{
+											'translate-x-10': smartAlarmChecked,
+										}"
+									></div>
+								</div>
 							</div>
 						</div>
-					</div>
+					</transition>
 				</div>
 				<div>
 					<div>
@@ -51,47 +53,66 @@
 							</div>
 						</div>
 					</div>
-					<div v-if="displayChecked" class="ease-in-out duration-1000">
-						<div class="flex justify-between items-center mt-3 mb-3">
-							<div class="flex flex-col">
-								<h2 class="ml-2 text-xl text-left font-bold">Smart Display</h2>
-								<h3 class="ml-2 text-left">The Display will automatically turn off during nighttime</h3>
-							</div>
-							<div class="flex justify-between items-center" @click="toggleSmartDisplay()">
-								<div
-									class="w-20 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out"
-									:class="{
-										'bg-green-400': smartDisplayChecked,
-									}"
-								>
+					<transition name="fade" mode="out-in">
+						<div key="2" v-if="displayChecked">
+							<div class="flex justify-between items-center mt-3 mb-3">
+								<div class="flex flex-col">
+									<h2 class="ml-2 text-xl text-left font-bold">Smart Display</h2>
+									<h3 class="ml-2 text-left">The Display will automatically turn off during nighttime</h3>
+								</div>
+								<div class="flex justify-between items-center" @click="toggleSmartDisplay()">
 									<div
-										class="bg-white w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out"
+										class="w-20 h-10 flex items-center bg-gray-300 rounded-full p-1 duration-300 ease-in-out"
 										:class="{
-											'translate-x-10': smartDisplayChecked,
+											'bg-green-400': smartDisplayChecked,
 										}"
-									></div>
+									>
+										<div
+											class="bg-white w-8 h-8 rounded-full shadow-md transform duration-300 ease-in-out"
+											:class="{
+												'translate-x-10': smartDisplayChecked,
+											}"
+										></div>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
+					</transition>
 				</div>
 				<div>
 					<div class="flex justify-between items-center pt-3 pb-3 mt-3 mb-3">
-
-					<ul class="items-center w-full text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 sm:flex dark:border-gray-600 dark:text-white">
-						<li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
-							<div class="flex items-center pl-3">
-								<input id="horizontal-list-radio-license" @click="togglePair(0)" type="radio" value="" :checked="displayMode == 0" name="list-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500" />
-								<label for="horizontal-list-radio-license" class="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Show everything</label>
-							</div>
-						</li>
-						<li class="w-full border-gray-200 dark:border-gray-600">
-							<div class="flex items-center pl-3">
-								<input id="horizontal-list-radio-id" @click="togglePair(1)" type="radio" value="" :checked="displayMode == 1" name="list-radio" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500" />
-								<label for="horizontal-list-radio-id" class="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Show data in pairs</label>
-							</div>
-						</li>
-					</ul>
+						<ul class="items-center w-full text-sm font-medium text-gray-900 bg-white rounded-lg border border-gray-200 sm:flex dark:border-gray-600 dark:text-white">
+							<li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+								<div class="flex items-center pl-3">
+									<input
+										id="horizontal-list-radio-license"
+										@click="togglePair(0)"
+										:disabled="!displayChecked"
+										type="radio"
+										value=""
+										:checked="displayMode == 0"
+										name="list-radio"
+										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500"
+									/>
+									<label for="horizontal-list-radio-license" class="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Show everything</label>
+								</div>
+							</li>
+							<li class="w-full border-gray-200 dark:border-gray-600">
+								<div class="flex items-center pl-3">
+									<input
+										id="horizontal-list-radio-id"
+										@click="togglePair(1)"
+										:disabled="!displayChecked"
+										type="radio"
+										value=""
+										:checked="displayMode == 1"
+										name="list-radio"
+										class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 dark:ring-offset-gray-700 dark:bg-gray-600 dark:border-gray-500"
+									/>
+									<label for="horizontal-list-radio-id" class="py-3 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Show data in pairs</label>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 				<div>
@@ -196,4 +217,19 @@ export default defineComponent({
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.fade-enter-active {
+	transition: opacity 0.3s;
+}
+
+.fade-leave-active {
+	transition: opacity 0.3s;
+}
+
+.fade-enter-to {
+	opacity: 1;
+}
+
+.fade-leave-to {
+	opacity: 0;
+}
 </style>
